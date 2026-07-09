@@ -265,8 +265,30 @@
       z-index: 200;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .sync-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
+      flex-wrap: wrap;
+    }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }
+    .sync-dot.on { background: #86efac; }
+    .sync-dot.busy { background: #fbbf24; }
+    .sync-dot.off { background: #94a3b8; }
+    .btn-share {
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      cursor: pointer;
+    }
   </style>
-</head>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <body>
 
 <header>
@@ -274,6 +296,11 @@
   <div class="meta">8/27 — 8/31 · 3人 · 日本桥</div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="progress-text" id="progressText">准备清单 0/0 已完成</div>
+  <div class="sync-bar">
+    <span class="sync-dot off" id="syncDot"></span>
+    <span id="syncLabel">单机模式</span>
+    <button class="btn-share" id="btnShare" type="button">分享链接</button>
+  </div>
 </header>
 
 <nav>
@@ -285,7 +312,7 @@
 <main>
   <!-- 清单 -->
   <section class="panel active" id="panel-checklist">
-    <div class="hint">勾选即自动保存到本手机，换设备不互通。填写负责人、备注等可直接打字。</div>
+    <div class="hint" id="syncHint">勾选自动保存。配置 Supabase 后可多人实时同步，见「多人共享设置.md」。</div>
 
     <div class="card" id="section-booking"></div>
     <div class="card" id="section-clothes"></div>
@@ -369,6 +396,134 @@
 
 <script>
 const STORAGE_KEY = 'osaka2026_trip_v1';
+const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'osaka2026-wxh' };
+const ROOM_ID = new URLSearchParams(location.search).get('room') || SYNC.defaultRoom || 'osaka2026-wxh';
+
+let memoryState = {};
+let supabaseClient = null;
+let syncChannel = null;
+let saveTimer = null;
+let applyingRemote = false;
+
+function getSyncEnabled() {
+  return SYNC.enabled && SYNC.supabaseUrl && SYNC.supabaseAnonKey && window.supabase;
+}
+
+function setSyncUI(status, label) {
+  const dot = document.getElementById('syncDot');
+  dot.className = 'sync-dot ' + (status === 'on' ? 'on' : status === 'busy' ? 'busy' : 'off');
+  document.getElementById('syncLabel').textContent = label;
+}
+
+function loadState() {
+  return { ...memoryState };
+}
+
+function setMemoryState(state) {
+  memoryState = state || {};
+  try { localStorage.setItem(STORAGE_KEY + '_' + ROOM_ID, JSON.stringify(memoryState)); } catch (_) {}
+}
+
+function saveState(state) {
+  if (applyingRemote) return;
+  setMemoryState(state);
+  updateProgress();
+  if (getSyncEnabled()) {
+    setSyncUI('busy', '同步中…');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(pushRemote, 500);
+  } else {
+    showToast('已保存（本机）');
+  }
+}
+
+async function pushRemote() {
+  if (!supabaseClient) return;
+  const { error } = await supabaseClient.from('trip_states').upsert({
+    room_id: ROOM_ID,
+    data: memoryState,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) {
+    setSyncUI('off', '同步失败');
+    showToast('同步失败，已存本机');
+    return;
+  }
+  setSyncUI('on', `多人同步 · 房间 ${ROOM_ID}`);
+  showToast('已同步');
+}
+
+async function pullRemote() {
+  if (!supabaseClient) return;
+  const { data, error } = await supabaseClient.from('trip_states').select('data').eq('room_id', ROOM_ID).maybeSingle();
+  if (error || !data) return;
+  applyingRemote = true;
+  setMemoryState(data.data || {});
+  refreshAllSections();
+  updateProgress();
+  applyingRemote = false;
+}
+
+function subscribeRemote() {
+  if (!supabaseClient) return;
+  syncChannel = supabaseClient
+    .channel('trip_' + ROOM_ID)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'trip_states',
+      filter: `room_id=eq.${ROOM_ID}`,
+    }, (payload) => {
+      if (payload.new?.data) {
+        applyingRemote = true;
+        setMemoryState(payload.new.data);
+        refreshAllSections();
+        updateProgress();
+        applyingRemote = false;
+        setSyncUI('on', `多人同步 · 房间 ${ROOM_ID}`);
+      }
+    })
+    .subscribe();
+}
+
+async function initSync() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY + '_' + ROOM_ID);
+    if (raw) memoryState = JSON.parse(raw);
+  } catch (_) { memoryState = {}; }
+
+  if (!getSyncEnabled()) {
+    setSyncUI('off', `单机模式 · 房间 ${ROOM_ID}`);
+    document.getElementById('syncHint').textContent =
+      '当前为单机保存。要三人共享编辑，请按 docs/多人共享设置.md 配置 Supabase 后 push。';
+    return;
+  }
+
+  supabaseClient = window.supabase.createClient(SYNC.supabaseUrl, SYNC.supabaseAnonKey);
+  setSyncUI('busy', '连接中…');
+  await pullRemote();
+  subscribeRemote();
+  setSyncUI('on', `多人同步 · 房间 ${ROOM_ID}`);
+  document.getElementById('syncHint').textContent =
+    '多人实时同步已开启。三人打开同一链接，勾选和填写会互相同步。';
+}
+
+function getShareUrl() {
+  const u = new URL(location.href);
+  u.searchParams.set('room', ROOM_ID);
+  return u.toString();
+}
+
+function refreshAllSections() {
+  renderCheckSection('section-booking', 'booking', DATA.booking);
+  renderCheckSection('section-clothes', 'clothes', DATA.clothes);
+  renderCheckSection('section-daily', 'daily', DATA.daily);
+  renderCheckSection('section-prep', 'prep', DATA.prep);
+  renderCheckSection('section-shopping', 'shopping', DATA.shopping);
+  renderCheckSection('section-gift', 'gift', DATA.gift);
+  renderCheckSection('section-luggage', 'luggage', DATA.luggage);
+  renderCheckSection('section-memo', 'memo', DATA.memo);
+}
 
 const DATA = {
   booking: {
@@ -540,17 +695,6 @@ const SCHEDULE = [
   ]},
 ];
 
-function loadState() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-  catch { return {}; }
-}
-
-function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  showToast('已保存');
-  updateProgress();
-}
-
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -652,25 +796,43 @@ document.querySelectorAll('nav button').forEach(btn => {
   });
 });
 
-document.getElementById('btnSave').addEventListener('click', () => showToast('数据已保存在本机'));
+document.getElementById('btnSave').addEventListener('click', () => {
+  if (getSyncEnabled()) pushRemote().then(() => showToast('已同步到云端'));
+  else showToast('数据已保存在本机');
+});
+document.getElementById('btnShare').addEventListener('click', async () => {
+  const url = getShareUrl();
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('链接已复制，发给同行人');
+  } catch {
+    prompt('复制此链接发给三人：', url);
+  }
+});
 document.getElementById('btnReset').addEventListener('click', () => {
   if (confirm('确定清空所有勾选和填写内容？')) {
-    localStorage.removeItem(STORAGE_KEY);
+    memoryState = {};
+    localStorage.removeItem(STORAGE_KEY + '_' + ROOM_ID);
+    if (supabaseClient) supabaseClient.from('trip_states').upsert({ room_id: ROOM_ID, data: {}, updated_at: new Date().toISOString() });
     location.reload();
   }
 });
 
-// Init
-renderCheckSection('section-booking', 'booking', DATA.booking);
-renderCheckSection('section-clothes', 'clothes', DATA.clothes);
-renderCheckSection('section-daily', 'daily', DATA.daily);
-renderCheckSection('section-prep', 'prep', DATA.prep);
-renderCheckSection('section-shopping', 'shopping', DATA.shopping);
-renderCheckSection('section-gift', 'gift', DATA.gift);
-renderCheckSection('section-luggage', 'luggage', DATA.luggage);
-renderCheckSection('section-memo', 'memo', DATA.memo);
-renderSchedule();
-updateProgress();
+async function initApp() {
+  await initSync();
+  renderCheckSection('section-booking', 'booking', DATA.booking);
+  renderCheckSection('section-clothes', 'clothes', DATA.clothes);
+  renderCheckSection('section-daily', 'daily', DATA.daily);
+  renderCheckSection('section-prep', 'prep', DATA.prep);
+  renderCheckSection('section-shopping', 'shopping', DATA.shopping);
+  renderCheckSection('section-gift', 'gift', DATA.gift);
+  renderCheckSection('section-luggage', 'luggage', DATA.luggage);
+  renderCheckSection('section-memo', 'memo', DATA.memo);
+  renderSchedule();
+  updateProgress();
+}
+
+initApp();
 </script>
 </body>
 </html>
