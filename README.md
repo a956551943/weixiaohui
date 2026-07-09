@@ -32,6 +32,20 @@
 
 推送代码后会自动触发 Actions 部署。
 
+### 多人共享编辑
+
+配置 **Supabase**（免费，约 5 分钟）后，三人打开**同一链接**可实时同步勾选和填写。
+
+详见 [`docs/多人共享设置.md`](docs/多人共享设置.md)
+
+分享链接格式（配置完成后）：
+
+```
+https://cdn.jsdelivr.net/gh/a956551943/weixiaohui@master/docs/index.html?room=osaka2026-wxh
+```
+
+未配置时仍为**单机模式**（各自手机独立保存）。
+
 ### 仍打不开时
 
 | 方式 | 做法 |
