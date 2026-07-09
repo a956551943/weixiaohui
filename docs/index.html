@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>大阪 5天4晚 · 出行计划</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --card: #fff;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --done: #dcfce7;
+      --done-border: #86efac;
+      --warn: #fff7ed;
+      --radius: 12px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: calc(72px + var(--safe-bottom));
+    }
+    header {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: #fff;
+      padding: 20px 16px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(30,64,175,.25);
+    }
+    header h1 { font-size: 20px; font-weight: 700; }
+    header .meta { font-size: 12px; opacity: .9; margin-top: 6px; }
+    .progress-bar {
+      margin-top: 12px;
+      background: rgba(255,255,255,.25);
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #86efac;
+      border-radius: 99px;
+      transition: width .3s;
+      width: 0%;
+    }
+    .progress-text { font-size: 11px; margin-top: 4px; opacity: .85; }
+
+    nav {
+      display: flex;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 99;
+    }
+    nav button {
+      flex: 1;
+      padding: 14px 8px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+    nav button.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+
+    main { padding: 12px; max-width: 640px; margin: 0 auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .card h2 {
+      font-size: 15px;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #eff6ff;
+    }
+    .card h3 {
+      font-size: 13px;
+      color: var(--text);
+      margin: 14px 0 8px;
+      font-weight: 600;
+    }
+    .card h3:first-of-type { margin-top: 0; }
+
+    .hint {
+      background: var(--warn);
+      border-left: 3px solid #f59e0b;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #92400e;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      transition: background .2s;
+    }
+    .check-item.done { background: var(--done); border-color: var(--done-border); }
+    .check-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .check-body { flex: 1; min-width: 0; }
+    .check-title { font-size: 14px; font-weight: 500; }
+    .check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .check-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .check-fields.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    .check-fields.full { grid-template-columns: 1fr; }
+    .field label {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fafafa;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .field textarea { min-height: 60px; resize: vertical; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    th {
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 8px 6px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+
+    .day-card {
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      margin-bottom: 16px;
+    }
+    .day-card .day-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    .timeline-row:last-child { border-bottom: none; }
+    .time { color: var(--primary); font-weight: 600; font-size: 11px; }
+    .place { font-weight: 500; }
+    .desc { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 4px 10px;
+      font-size: 13px;
+    }
+    .info-grid dt { color: var(--muted); }
+    .info-grid dd { font-weight: 500; }
+
+    .fab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 10px 12px calc(10px + var(--safe-bottom));
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .fab-bar button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-save { background: var(--primary); color: #fff; }
+    .btn-reset {
+      background: #f1f5f9;
+      color: var(--muted);
+      flex: 0 0 auto;
+      padding: 12px 16px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 99px;
+      font-size: 13px;
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>大阪 5天4晚出行计划</h1>
+  <div class="meta">8/27 — 8/31 · 3人 · 日本桥</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">准备清单 0/0 已完成</div>
+</header>
+
+<nav>
+  <button class="active" data-tab="checklist">准备清单</button>
+  <button data-tab="schedule">逐日行程</button>
+  <button data-tab="ref">参考信息</button>
+</nav>
+
+<main>
+  <!-- 清单 -->
+  <section class="panel active" id="panel-checklist">
+    <div class="hint">勾选即自动保存到本手机，换设备不互通。填写负责人、备注等可直接打字。</div>
+
+    <div class="card" id="section-booking"></div>
+    <div class="card" id="section-clothes"></div>
+    <div class="card" id="section-daily"></div>
+    <div class="card" id="section-prep"></div>
+    <div class="card" id="section-shopping"></div>
+    <div class="card" id="section-gift"></div>
+    <div class="card" id="section-luggage"></div>
+    <div class="card" id="section-memo"></div>
+  </section>
+
+  <!-- 行程 -->
+  <section class="panel" id="panel-schedule">
+    <div class="card" id="section-schedule"></div>
+    <div class="card">
+      <h2>航班与住宿</h2>
+      <dl class="info-grid">
+        <dt>去程</dt><dd>8/27 08:10 → 11:35 · 关西 T1</dd>
+        <dt>返程</dt><dd>8/31 12:35 → 14:20</dd>
+        <dt>酒店</dt><dd>日本桥 2-2-23</dd>
+        <dt>入住</dt><dd>16:00 后 · 不含早</dd>
+        <dt>退房</dt><dd>8/31 10:00 前</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 参考 -->
+  <section class="panel" id="panel-ref">
+    <div class="card">
+      <h2>早餐推荐</h2>
+      <table>
+        <tr><th>店名</th><th>开门</th><th>特色</th></tr>
+        <tr><td>伊吹咖啡店</td><td>07:00</td><td>鸡蛋三明治 ¥660</td></tr>
+        <tr><td>黑门三平</td><td>09:30</td><td>海鲜丼 ¥1,200</td></tr>
+        <tr><td>高桥食品</td><td>08:00</td><td>手工豆乳 ¥70</td></tr>
+        <tr><td>乌冬久太郎</td><td>07:00</td><td>立食乌冬 ¥500</td></tr>
+        <tr><td>黑门中川超市</td><td>24h</td><td>便当饭团</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>景点门票</h2>
+      <table>
+        <tr><th>日期</th><th>景点</th><th>门票</th></tr>
+        <tr><td>8/28</td><td>USJ</td><td>¥8,900–11,900</td></tr>
+        <tr><td>8/29</td><td>东大寺</td><td>¥600</td></tr>
+        <tr><td>8/29</td><td>神户港烟花</td><td>免费 19:30</td></tr>
+        <tr><td>8/30</td><td>大阪城</td><td>¥600</td></tr>
+        <tr><td>8/30</td><td>梅田蓝天大厦</td><td>¥1,800</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>交通路线</h2>
+      <table>
+        <tr><th>路线</th><th>耗时</th><th>费用</th></tr>
+        <tr><td>机场→日本桥</td><td>45分</td><td>¥1,670</td></tr>
+        <tr><td>日本桥→机场</td><td>50分</td><td>¥970起</td></tr>
+        <tr><td>日本桥→USJ</td><td>35分</td><td>IC卡</td></tr>
+        <tr><td>日本桥→奈良</td><td>35分</td><td>¥680</td></tr>
+        <tr><td>难波→神户</td><td>30分</td><td>¥410</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>生活参考</h2>
+      <dl class="info-grid">
+        <dt>气温</dt><dd>28–34°C 闷热多雨</dd>
+        <dt>穿搭</dt><dd>透气衣物+防晒+运动鞋</dd>
+        <dt>支付</dt><dd>备现金零钱</dd>
+        <dt>退税</dt><dd>机场 T1 离境退税</dd>
+        <dt>报警</dt><dd>110 · 急救 119</dd>
+        <dt>领馆</dt><dd>+81-6-6445-9481</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<div class="fab-bar">
+  <button class="btn-reset" id="btnReset">重置</button>
+  <button class="btn-save" id="btnSave">已自动保存</button>
+</div>
+<div class="toast" id="toast">已保存</div>
+
+<script>
+const STORAGE_KEY = 'osaka2026_trip_v1';
+
+const DATA = {
+  booking: {
+    title: '1.1 证件与预订',
+    fields: ['负责人', '完成日期', '备注'],
+    items: [
+      '护照有效期 ≥ 6 个月',
+      '日本签证',
+      '机票订单（8/27 去 · 8/31 回）',
+      '酒店订单（日本桥 2-2-23）',
+      'USJ 门票',
+      'USJ Express Pass',
+      '梅田蓝天大门票',
+      '日本 eSIM / 漫游开通',
+      '兑换日元现金',
+      '信用卡境外支付确认',
+      '下载 USJ 官方 App',
+      '8/28 晚确认神户花火 @kobehanabi',
+    ],
+  },
+  clothes: {
+    title: '1.2 衣物准备',
+    fields: ['数量', '穿搭日', '备注'],
+    items: [
+      { t: '短袖 T 恤', s: '日常' },
+      { t: '轻薄长裤 / 短裤', s: '日常' },
+      { t: '透气速干衣物', s: '8/28 USJ' },
+      { t: '软底运动鞋', s: '全程' },
+      { t: '备用袜子', s: '全程 · USJ多备1双' },
+      { t: '薄外套 / 防晒衫', s: '8/29 神户' },
+      { t: '遮阳帽', s: '户外日' },
+      { t: '墨镜', s: '户外日' },
+      { t: '折叠伞 / 轻便雨衣', s: '全程' },
+      { t: '睡衣 / 家居服', s: '酒店' },
+      { t: '内衣裤', s: '5天' },
+      { t: '泳衣（如需）', s: '' },
+      { t: '其他', s: '' },
+    ],
+  },
+  daily: {
+    title: '1.3 日用品与电子设备',
+    fields: ['数量', '备注'],
+    items: [
+      { t: '手机 + 充电器', s: '' },
+      { t: '充电宝（≤100Wh）', s: '随身登机' },
+      { t: '转换插头', s: '日本A型' },
+      { t: '防晒霜 SPF50+', s: '' },
+      { t: '常用药', s: '肠胃/感冒/止痛' },
+      { t: '创可贴、防蚊液', s: '' },
+      { t: '湿巾、纸巾', s: '' },
+      { t: '小背包 / 日行袋', s: '' },
+      { t: '折叠购物袋', s: '' },
+      { t: '保温水杯', s: '' },
+      { t: '小风扇', s: '8/28 USJ' },
+      { t: '护照复印件', s: '与原件分开' },
+      { t: '其他', s: '' },
+    ],
+  },
+  prep: {
+    title: '1.4 国内出发前置办',
+    fields: ['数量', '备注'],
+    items: [
+      { t: '日元现金', s: '' },
+      { t: 'eSIM / 漫游包', s: '' },
+      { t: '旅行保险', s: '' },
+      { t: '打印机票+酒店订单', s: '备用' },
+      { t: '其他', s: '' },
+    ],
+  },
+  shopping: {
+    title: '1.5 日本购物清单',
+    fields: ['预算', '购买地点', '备注'],
+    items: [
+      { t: '药妆', s: '心斋桥/唐吉诃德' },
+      { t: '零食伴手礼', s: '机场/药妆店' },
+      { t: '优衣库/GU', s: '心斋桥' },
+      { t: '动漫周边/手办', s: '日本桥' },
+      { t: '黑门市场食品', s: '黑门市场' },
+      { t: '相机/电器', s: '电器街' },
+      { t: '化妆品/香水', s: '大丸百货' },
+      { t: '（自填）', s: '' },
+      { t: '（自填）', s: '' },
+      { t: '（自填）', s: '' },
+    ],
+  },
+  gift: {
+    title: '1.6 伴手礼分配',
+    fields: ['对象', '礼品', '预算', '备注'],
+    items: [
+      { t: '伴手礼 1', s: '' },
+      { t: '伴手礼 2', s: '' },
+      { t: '伴手礼 3', s: '' },
+      { t: '伴手礼 4', s: '' },
+      { t: '伴手礼 5', s: '' },
+    ],
+  },
+  luggage: {
+    title: '1.7 行李打包检查',
+    fields: ['备注'],
+    items: [
+      { t: '托运行李称重 ≤ 航司限额', s: '限额____kg/人' },
+      { t: '液体化妆品放托运', s: '随身≤100ml' },
+      { t: '充电宝放随身包', s: '不可托运' },
+      { t: '护照/钱包/手机随身', s: '' },
+      { t: '退税商品留收据未拆封', s: '' },
+      { t: '三人行李分装', s: '' },
+    ],
+  },
+  memo: {
+    title: '1.8 个人备忘',
+    fields: ['内容'],
+    items: [
+      { t: '备忘 1', s: '' },
+      { t: '备忘 2', s: '' },
+      { t: '备忘 3', s: '' },
+    ],
+  },
+};
+
+const SCHEDULE = [
+  { day: 'D1 · 8/27 抵达', rows: [
+    ['08:10–11:35', '航班', '去程，抵达关西 T1'],
+    ['11:35–12:30', '关西机场', '入境、取行李、买 ICOCA'],
+    ['12:30–13:15', '→ 日本桥', '南海 Rapi:t → 难波 → 千日前线'],
+    ['13:15–13:30', '酒店', '寄存行李'],
+    ['13:30–14:30', '黑门市场', '午餐'],
+    ['14:30–15:30', '日本桥筋', '药妆、电器街'],
+    ['15:30–16:00', '酒店', '办理入住'],
+    ['16:00–17:00', '酒店', '休息'],
+    ['17:00–20:30', '道顿堀', '逛街、晚餐'],
+    ['20:30–21:00', '酒店', '返回休息'],
+  ]},
+  { day: 'D2 · 8/28 环球影城', rows: [
+    ['06:30–07:00', '伊吹咖啡', '早餐'],
+    ['07:00–07:35', '→ USJ', '御堂筋→本町→JR→环球城'],
+    ['07:35–08:30', 'USJ门口', '排队入园'],
+    ['08:30–12:00', 'USJ', '任天堂、翼龙、哈利波特'],
+    ['12:00–13:00', 'USJ园内', '午餐'],
+    ['13:00–17:30', 'USJ', '小小兵、水世界'],
+    ['17:30–20:00', '道顿堀', '晚餐、休息'],
+  ]},
+  { day: 'D3 · 8/29 奈良+花火', rows: [
+    ['08:00–08:45', '黑门市场', '早餐'],
+    ['08:45–09:30', '→ 奈良', '近铁日本桥站'],
+    ['09:30–12:00', '奈良公园', '喂鹿、春日大社'],
+    ['12:00–13:00', '东大寺', '大佛殿 ¥600'],
+    ['13:00–14:00', '奈良町', '午餐'],
+    ['14:00–15:30', '酒店', '休息'],
+    ['17:00–17:35', '→ 神户', '阪神 难波→元町'],
+    ['17:35–19:15', '美利坚公园', '散步、晚餐'],
+    ['19:30–19:35', '美利坚公园', '神户港烟花'],
+    ['19:35–21:00', '酒店', '返回休息'],
+  ]},
+  { day: 'D4 · 8/30 大阪城+梅田', rows: [
+    ['08:00–09:00', '黑门市场', '早餐'],
+    ['09:00–12:00', '大阪城', '天守阁 ¥600'],
+    ['12:00–13:00', '午餐', ''],
+    ['13:00–15:30', '心斋桥', '午休、购物'],
+    ['16:00–19:00', '梅田蓝天大厦', '日落夜景 ¥1,800'],
+    ['19:00–20:30', '酒店', '晚餐、返回'],
+  ]},
+  { day: 'D5 · 8/31 返程', rows: [
+    ['06:30–07:00', '早餐', '伊吹咖啡/中川超市'],
+    ['07:00–08:00', '酒店', '退房'],
+    ['08:00–09:00', '购物', '伴手礼、药妆'],
+    ['09:00–09:50', '→ 机场', '堺筋→天下茶屋→南海'],
+    ['10:00–12:00', '关西机场', '值机、退税'],
+    ['12:35–14:20', '航班', '返程'],
+  ]},
+];
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  showToast('已保存');
+  updateProgress();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+function itemId(section, idx) { return `${section}_${idx}`; }
+
+function renderCheckSection(containerId, sectionKey, config) {
+  const el = document.getElementById(containerId);
+  const state = loadState();
+  let html = `<h2>${config.title}</h2>`;
+  const isSimple = typeof config.items[0] === 'string';
+
+  config.items.forEach((item, idx) => {
+    const id = itemId(sectionKey, idx);
+    const title = isSimple ? item : item.t;
+    const sub = isSimple ? '' : item.s;
+    const checked = state[id]?.checked || false;
+    const fields = state[id]?.fields || {};
+
+    html += `<div class="check-item${checked ? ' done' : ''}" data-id="${id}">
+      <input type="checkbox" ${checked ? 'checked' : ''} aria-label="${title}" />
+      <div class="check-body">
+        <div class="check-title">${title}</div>
+        ${sub ? `<div class="check-sub">${sub}</div>` : ''}
+        <div class="check-fields${config.fields.length >= 3 ? ' cols3' : ''}${config.fields.length === 1 ? ' full' : ''}">
+          ${config.fields.map((f, fi) => `
+            <div class="field">
+              <label>${f}</label>
+              <input type="text" data-field="${fi}" value="${(fields[fi] || '').replace(/"/g, '&quot;')}" placeholder="填写${f}" />
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+  });
+
+  el.innerHTML = html;
+
+  el.querySelectorAll('.check-item').forEach(row => {
+    const id = row.dataset.id;
+    const cb = row.querySelector('input[type=checkbox]');
+    cb.addEventListener('change', () => {
+      const s = loadState();
+      s[id] = s[id] || { fields: {} };
+      s[id].checked = cb.checked;
+      row.classList.toggle('done', cb.checked);
+      saveState(s);
+    });
+    row.querySelectorAll('input[type=text]').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const s = loadState();
+        s[id] = s[id] || { checked: false, fields: {} };
+        s[id].fields[inp.dataset.field] = inp.value;
+        saveState(s);
+      });
+    });
+  });
+}
+
+function renderSchedule() {
+  const el = document.getElementById('section-schedule');
+  el.innerHTML = '<h2>逐日时刻表</h2>' + SCHEDULE.map(d => `
+    <div class="day-card">
+      <div class="day-title">${d.day}</div>
+      ${d.rows.map(([time, place, desc]) => `
+        <div class="timeline-row">
+          <div class="time">${time}</div>
+          <div><div class="place">${place}</div>${desc ? `<div class="desc">${desc}</div>` : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function updateProgress() {
+  const state = loadState();
+  let total = 0, done = 0;
+  Object.keys(DATA).forEach(key => {
+    DATA[key].items.forEach((_, idx) => {
+      total++;
+      if (state[itemId(key, idx)]?.checked) done++;
+    });
+  });
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `准备清单 ${done}/${total} 已完成`;
+}
+
+// Tab switch
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+document.getElementById('btnSave').addEventListener('click', () => showToast('数据已保存在本机'));
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (confirm('确定清空所有勾选和填写内容？')) {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+});
+
+// Init
+renderCheckSection('section-booking', 'booking', DATA.booking);
+renderCheckSection('section-clothes', 'clothes', DATA.clothes);
+renderCheckSection('section-daily', 'daily', DATA.daily);
+renderCheckSection('section-prep', 'prep', DATA.prep);
+renderCheckSection('section-shopping', 'shopping', DATA.shopping);
+renderCheckSection('section-gift', 'gift', DATA.gift);
+renderCheckSection('section-luggage', 'luggage', DATA.luggage);
+renderCheckSection('section-memo', 'memo', DATA.memo);
+renderSchedule();
+updateProgress();
+</script>
+</body>
+</html>
