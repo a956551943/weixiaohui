@@ -10,15 +10,34 @@
 | 汇报 / 打印 | [`docs/大阪旅行攻略_2026年8月.md`](docs/大阪旅行攻略_2026年8月.md) | 文字版行程 |
 | 本地预览网页 | 浏览器打开 `docs/index.html` | 无需联网（填写仍保存在手机本地） |
 
-## 发布到公网（GitHub Pages）
+## 手机访问
 
-发布后手机可通过链接访问：
+### 国内推荐（无需 VPN）
+
+**https://cdn.jsdelivr.net/gh/a956551943/weixiaohui@master/docs/index.html**
+
+> jsDelivr 是国内较稳定的 GitHub 文件镜像，功能与网页版完全相同，可勾选、可填写、自动保存。
+
+### GitHub Pages 官方链接（国外 / 开 VPN 可用）
 
 **https://a956551943.github.io/weixiaohui/**
 
-### 步骤（已完成首次推送后）
+### 开启 Pages（若官方链接 404）
 
-GitHub 仓库 → **Settings → Pages** → Source: **Deploy from branch** → Branch: **master** → Folder: **/docs** → Save
+1. 打开 https://github.com/a956551943/weixiaohui/settings/pages  
+2. **Build and deployment → Source** 选 **GitHub Actions**（推荐）  
+   或选 **Deploy from branch** → Branch: `master` → Folder: `/docs`  
+3. Custom domain 留空，有内容则 **Remove**  
+4. 等 2–5 分钟刷新  
+
+推送代码后会自动触发 Actions 部署。
+
+### 仍打不开时
+
+| 方式 | 做法 |
+|------|------|
+| 微信发文件 | 把 `docs/index.html` 发到微信，手机浏览器打开 |
+| 本地打开 | 双击 `docs/index.html` |
 
 ### 注意事项
 
