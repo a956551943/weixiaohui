@@ -12,15 +12,19 @@
 
 ## 手机访问
 
-### 国内推荐（无需 VPN）
+### 推荐链接（正常网页，可勾选、多人同步）
 
-**https://cdn.jsdelivr.net/gh/a956551943/weixiaohui@master/docs/index.html**
+**https://a956551943.github.io/weixiaohui/?room=osaka2026-wxh**
 
-> jsDelivr 是国内较稳定的 GitHub 文件镜像，功能与网页版完全相同，可勾选、可填写、自动保存。
+> GitHub Pages 会正确渲染网页。jsDelivr **不能**用来打开 HTML 页面（会显示源代码），仅用于加载 JS 库。
 
-### GitHub Pages 官方链接（国外 / 开 VPN 可用）
+### 国内打不开 GitHub Pages 时
 
-**https://a956551943.github.io/weixiaohui/**
+| 方式 | 做法 |
+|------|------|
+| **微信发文件** | 把 `docs/index.html` 发到微信，用手机浏览器打开（已内置 Supabase 配置） |
+| **本地打开** | 双击 `docs/index.html` |
+| **换网络** | 部分运营商可直连 `github.io`，可开/关 Wi‑Fi 或流量各试一次 |
 
 ### 开启 Pages（若官方链接 404）
 
@@ -38,10 +42,10 @@
 
 详见 [`docs/多人共享设置.md`](docs/多人共享设置.md)
 
-分享链接格式（配置完成后）：
+分享链接（发给另外两人）：
 
 ```
-https://cdn.jsdelivr.net/gh/a956551943/weixiaohui@master/docs/index.html?room=osaka2026-wxh
+https://a956551943.github.io/weixiaohui/?room=osaka2026-wxh
 ```
 
 未配置时仍为**单机模式**（各自手机独立保存）。
