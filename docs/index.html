@@ -361,12 +361,12 @@
       <table>
         <tr><th>日·餐</th><th>店 · 详细地址</th><th>预约</th></tr>
         <tr><td>D1 午A</td><td>机场便利店/T1美食街<br>关西机场 T1</td><td>不用·先吃再走</td></tr>
-        <tr><td>D1 午B</td><td>塚本站前便利店/周边定食<br>淀川区塚本 · 寄行李后再吃</td><td>不用·二选一</td></tr>
+        <tr><td>D1 午B</td><td>宮本むなし JR塚本駅前<br>淀川区塚本 2-28-23<br>东口步行约1分<br>备选：站前便利店/吉野家塚本2-28-2</td><td>不用<br><a href="https://store.srsholdings.com/m-munashi/detail/5116/" target="_blank" rel="noopener">店铺页</a></td></tr>
         <tr><td>D1 晚</td><td>朋友已预约的居酒屋<br>店名/地址/时间待补</td><td>已预约</td></tr>
         <tr><td>D2A 午</td><td>USJ 园内<br>此花区樱岛 2</td><td>多数现场</td></tr>
-        <tr><td>D2A 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>USJ 后前往</td><td><a href="https://www.hotpepper.jp/strJ000018294/" target="_blank" rel="noopener">Hot Pepper</a><br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
+        <tr><td>D2A 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>USJ 后前往</td><td>不用预约·现场排队<br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
         <tr><td>D2B 午</td><td>だるま新世界总本店<br>浪速区恵美须东 2-3-9<br>动物园前站步行约5分</td><td>总本店不可约<br><a href="https://www.kushikatu-daruma.com/" target="_blank" rel="noopener">分店说明</a></td></tr>
-        <tr><td>D2B 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>戎桥·大螃蟹招牌</td><td><a href="https://www.hotpepper.jp/strJ000018294/" target="_blank" rel="noopener">Hot Pepper</a><br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
+        <tr><td>D2B 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>戎桥·大螃蟹招牌</td><td>不用预约·现场排队<br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
         <tr><td>D3 午</td><td>奈良町一带食堂<br>奈良市奈良町</td><td>一般不用约</td></tr>
         <tr><td>D3 晚</td><td>元町便利店外带<br>→美利坚公园<br>神户市中央区波止场町</td><td>不用（花火夜）</td></tr>
         <tr><td>D4 午</td><td>一兰梅田阪急东通店<br>北区堂山町 3-13</td><td>不可预约·排队<br><a href="https://ichiran.com/shop/kinki/umeda-hankyu/" target="_blank" rel="noopener">官方店页</a></td></tr>
@@ -587,8 +587,7 @@ const DATA = {
       '大阪城天守阁 WEB 票',
       '通天阁门票（备选日，约 ¥1,000）',
       '香奈儿阪急精品来店预约（官网 book-appointment）',
-      '预约蟹道乐道顿堀本店（8/28 18:30左右）',
-      '预约大阪城 Crossfield 下午茶（8/30 15:30，备注景观位）',
+      '大阪城 Crossfield 下午茶预约（8/30 15:30，备注景观位）',
       '日本 eSIM / 漫游开通',
       '兑换日元现金',
       '信用卡境外支付确认',
@@ -731,7 +730,7 @@ const SCHEDULE = [
     ['12:30–13:00', '午餐A：机场便利店/美食街', 'T1便当轻食·先吃再走最省事'],
     ['13:00–14:20', '交通：机场→民宿', 'JR关空快速→大阪→塚本·步行5–8分'],
     ['14:20–14:40', '住宿：寄存行李', '入住前先放行李（提前问房东）'],
-    ['14:40–16:00', '午餐B：塚本/民宿周边饭店', '机场没吃则站前便当或定食拉面'],
+    ['14:40–16:00', '午餐B：宮本むなし塚本站前', '塚本2-28-23·东口1分；备选便利店/吉野家'],
     ['16:00–16:40', '住宿：正式入住', '16:00后办理·清点洗漱用品'],
     ['16:40–18:40', '购物：松本清心斋桥南店', '心斋桥筋2-5-5 · Kiss Me/IHADA/牙膏'],
     ['18:40–20:40', '晚餐：朋友预约的居酒屋', '以预约店名/时间/地址为准'],
@@ -744,7 +743,7 @@ const SCHEDULE = [
     ['12:00–13:00', '午餐：USJ园内餐厅', '任天堂世界或哈利波特区'],
     ['13:00–17:30', '游玩：USJ（下午）', '小小兵、水世界等'],
     ['17:30–18:30', '交通：USJ→道顿堀', '西九条换乘→难波'],
-    ['18:30–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 强烈建议预约'],
+    ['18:30–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 不用预约·现场排队'],
     ['20:30–', '交通：回民宿', '难波→梅田→塚本'],
   ]},
   { day: 'D2B · 8/28 深度游（备选）', rows: [
@@ -755,7 +754,7 @@ const SCHEDULE = [
     ['13:00–15:30', '游玩：阿倍野HARUKAS', '阿倍野筋1-1-43 · 展望台可选'],
     ['15:30–17:30', '购物：难波Sanrio+爱电王', 'Hello Kitty；ビックなんば比价iPhone'],
     ['17:30–18:00', '购物：心斋桥药妆补货', '可选·漏买再进松本清'],
-    ['18:00–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 强烈建议预约'],
+    ['18:00–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 不用预约·现场排队'],
     ['20:30–', '交通：回民宿', '难波→梅田→塚本'],
   ]},
   { day: 'D3 · 8/29 奈良+花火', rows: [
