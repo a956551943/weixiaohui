@@ -289,6 +289,22 @@
     .ref-note { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
     #panel-ref table a { color: var(--primary); word-break: break-all; }
     #panel-ref td { font-size: 12px; line-height: 1.45; }
+    .feature-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 14px;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #9f1239, #e11d48 60%, #f59e0b);
+      box-shadow: 0 4px 14px rgba(159,18,57,.2);
+    }
+    .feature-link strong { display: block; font-size: 15px; }
+    .feature-link span { display: block; margin-top: 2px; font-size: 11px; opacity: .9; }
+    .feature-link b { flex: 0 0 auto; font-size: 20px; }
   </style>
   <script>
     window.TRIP_SYNC = {
@@ -337,6 +353,10 @@
 
   <!-- 行程 -->
   <section class="panel" id="panel-schedule">
+    <a class="feature-link" href="./usj.html">
+      <span><strong>USJ 顶门高效攻略</strong><span>8/30 周日确定去 · 任天堂、哈利波特、侏罗纪、小黄人</span></span>
+      <b>→</b>
+    </a>
     <div class="card" id="section-schedule"></div>
     <div class="card">
       <h2>航班与住宿</h2>
@@ -363,15 +383,13 @@
         <tr><td>D1 午A</td><td>机场便利店/T1美食街<br>关西机场 T1</td><td>不用·先吃再走</td></tr>
         <tr><td>D1 午B</td><td>宮本むなし JR塚本駅前<br>淀川区塚本 2-28-23<br>东口步行约1分<br>备选：站前便利店/吉野家塚本2-28-2</td><td>不用<br><a href="https://store.srsholdings.com/m-munashi/detail/5116/" target="_blank" rel="noopener">店铺页</a></td></tr>
         <tr><td>D1 晚</td><td>朋友已预约的居酒屋<br>店名/地址/时间待补</td><td>已预约</td></tr>
-        <tr><td>D2A 午</td><td>USJ 园内<br>此花区樱岛 2</td><td>多数现场</td></tr>
-        <tr><td>D2A 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>USJ 后前往</td><td>不用预约·现场排队<br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
-        <tr><td>D2B 午</td><td>だるま新世界总本店<br>浪速区恵美须东 2-3-9<br>动物园前站步行约5分</td><td>总本店不可约<br><a href="https://www.kushikatu-daruma.com/" target="_blank" rel="noopener">分店说明</a></td></tr>
-        <tr><td>D2B 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>戎桥·大螃蟹招牌</td><td>不用预约·现场排队<br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
+        <tr><td>D2 午</td><td>一兰梅田阪急东通店<br>北区堂山町 3-13</td><td>不可预约·排队<br><a href="https://ichiran.com/shop/kinki/umeda-hankyu/" target="_blank" rel="noopener">官方店页</a></td></tr>
+        <tr><td>D2 下午茶</td><td>Crossfield<br>大阪城1-1 MIRAIZA 2F<br>正对天守阁</td><td><a href="https://www.landmark-osaka.com/crossfield/" target="_blank" rel="noopener">官方预约</a><br>06-6941-7100</td></tr>
+        <tr><td>D2 晚</td><td>朋友预约的印度菜餐厅<br>店名/地址/时间待补</td><td>已预约</td></tr>
         <tr><td>D3 午</td><td>奈良町一带食堂<br>奈良市奈良町</td><td>一般不用约</td></tr>
         <tr><td>D3 晚</td><td>元町便利店外带<br>→美利坚公园<br>神户市中央区波止场町</td><td>不用（花火夜）</td></tr>
-        <tr><td>D4 午</td><td>一兰梅田阪急东通店<br>北区堂山町 3-13</td><td>不可预约·排队<br><a href="https://ichiran.com/shop/kinki/umeda-hankyu/" target="_blank" rel="noopener">官方店页</a></td></tr>
-        <tr><td>D4 下午茶</td><td>Crossfield<br>大阪城1-1 MIRAIZA 2F<br>正对天守阁</td><td><a href="https://www.landmark-osaka.com/crossfield/" target="_blank" rel="noopener">官方预约</a><br>06-6941-7100</td></tr>
-        <tr><td>D4 晚</td><td>烧肉うしごろ梅田<br>北区大深町 5-1<br>うめきたグリーンプレイス 3F</td><td><a href="https://restaurant.ikyu.com/145302/" target="_blank" rel="noopener">一休预约</a><br>06-6372-1129</td></tr>
+        <tr><td>D4 午</td><td>USJ 园内<br>此花区樱岛 2</td><td>多数现场 / App点餐</td></tr>
+        <tr><td>D4 晚</td><td>蟹道乐道顿堀本店<br>中央区道顿堀 1-6-18<br>USJ 后前往</td><td>不用预约·现场排队<br><a href="https://douraku.co.jp/kansai/honten/" target="_blank" rel="noopener">官网</a><br>06-6211-8975</td></tr>
         <tr><td>D5 早/午</td><td>塚本便利店 → 关西机场 T1</td><td>不用</td></tr>
       </table>
     </div>
@@ -381,7 +399,7 @@
       <table>
         <tr><th>景点 · 地址</th><th>怎么买</th></tr>
         <tr><td>USJ<br>此花区樱岛 2</td><td><a href="https://www.usj.co.jp/web/ja/jp/tickets/lineup" target="_blank" rel="noopener">官方门票</a><br><a href="https://www.usj.co.jp/web/ja/jp/tickets/lineup/expresspass" target="_blank" rel="noopener">Express Pass</a></td></tr>
-        <tr><td>通天阁<br>浪速区恵美须东 1-18-6</td><td>需时段预约<br><a href="https://www.tsutenkaku.co.jp/" target="_blank" rel="noopener">官网→事前予約</a><br><a href="https://www.kkday.com/zh-cn/product/174504" target="_blank" rel="noopener">KKday</a></td></tr>
+        <tr><td>通天阁（本次未排）<br>浪速区恵美须东 1-18-6</td><td>需时段预约<br><a href="https://www.tsutenkaku.co.jp/" target="_blank" rel="noopener">官网→事前予約</a></td></tr>
         <tr><td>东大寺大佛殿<br>奈良市杂司町 406-1</td><td>现场 ¥600<br><a href="https://www.todaiji.or.jp/" target="_blank" rel="noopener">官网</a></td></tr>
         <tr><td>神户港烟花<br>美利坚公园（波止场町）</td><td>免费 · 当天确认<br><a href="https://www.instagram.com/kobehanabi/" target="_blank" rel="noopener">@kobehanabi</a></td></tr>
         <tr><td>大阪城天守阁<br>中央区大阪城 1-1</td><td>大人约¥1200 · WEB票免排队<br><a href="https://www.osakacastle.net/guide/" target="_blank" rel="noopener">购票说明</a><br><a href="https://ars-osakacastle.triplabo.jp/activity/ja/LINKTIVITY-E4UL8" target="_blank" rel="noopener">官方 WEB 票</a></td></tr>
@@ -582,17 +600,16 @@ const DATA = {
       '机票订单（8/27 去 · 8/31 回）',
       '民宿订单（西淀川区柏里 / 宿の四）',
       '入住前确认洗漱用品/毛巾/拖鞋/洗衣机',
-      'USJ 门票（若确定去）',
-      'USJ Express Pass（可选）',
+      'USJ 门票（8/30 已确定去）',
+      'USJ Express Pass（可选，含任天堂入场确约更稳）',
       '大阪城天守阁 WEB 票',
-      '通天阁门票（备选日，约 ¥1,000）',
-      '香奈儿阪急精品来店预约（官网 book-appointment）',
-      '大阪城 Crossfield 下午茶预约（8/30 15:30，备注景观位）',
+      '大阪城 Crossfield 下午茶预约（8/28 15:30，备注景观位）',
+      '香奈儿阪急精品来店预约（官网 book-appointment · 约 8/28）',
       '日本 eSIM / 漫游开通',
       '兑换日元现金',
       '信用卡境外支付确认',
-      '下载 USJ 官方 App（若去乐园）',
-      '8/28 晚确认神户花火 @kobehanabi',
+      '下载 USJ 官方 App（必装）',
+      '8/29 晚确认神户花火 @kobehanabi',
     ],
   },
   clothes: {
@@ -601,7 +618,7 @@ const DATA = {
     items: [
       { t: '短袖 T 恤', s: '日常' },
       { t: '轻薄长裤 / 短裤', s: '日常' },
-      { t: '透气速干衣物', s: '8/28 户外日' },
+      { t: '透气速干衣物', s: '8/30 USJ' },
       { t: '软底运动鞋', s: '全程' },
       { t: '备用袜子', s: '全程 · 多备1双' },
       { t: '薄外套 / 防晒衫', s: '8/29 神户' },
@@ -663,28 +680,28 @@ const DATA = {
     title: '1.6 采购清单（分批）',
     fields: ['预算', '购买日/地点', '备注'],
     items: [
-      { t: 'iPhone（友都八喜梅田）', s: 'D4 · 免税后约等于官网；Apple直营对游客不免税' },
+      { t: 'iPhone（友都八喜梅田）', s: 'D2 · 免税后约等于官网；Apple直营对游客不免税' },
       { t: '日本电话卡/eSIM', s: '旅行用数据eSIM；要长期日号需另查海外方案' },
       { t: 'Kiss Me 眼线笔', s: 'D1 松本清心斋桥' },
-      { t: '香奈儿水粉底+粉底液', s: 'D4 大丸梅田2F' },
-      { t: '香奈儿口红/洗面奶', s: 'D4 大丸2F' },
-      { t: '香奈儿唇釉186/192/154/174/188', s: 'D4 大丸2F' },
-      { t: '可可小姐唇膏105/130/112', s: 'D4 大丸2F' },
-      { t: '香奈儿高光棒 transparent', s: 'D4 大丸2F' },
-      { t: '香奈儿包 Preppy Coco/CF mini/黑金球大mini', s: 'D4 阪急5-6F · 务必官网预约' },
-      { t: 'SK-II 神仙水 ×2', s: 'D4 大丸/阪神2F' },
-      { t: '植村秀卸妆油', s: 'D4 大丸2F' },
-      { t: 'MAC修容高光双色 + NARS遮瑕', s: 'D4 大丸2F' },
-      { t: 'Elégance大饼 1号+6号', s: 'D4 阪急2F' },
+      { t: '香奈儿水粉底+粉底液', s: 'D2 大丸梅田2F' },
+      { t: '香奈儿口红/洗面奶', s: 'D2 大丸2F' },
+      { t: '香奈儿唇釉186/192/154/174/188', s: 'D2 大丸2F' },
+      { t: '可可小姐唇膏105/130/112', s: 'D2 大丸2F' },
+      { t: '香奈儿高光棒 transparent', s: 'D2 大丸2F' },
+      { t: '香奈儿包 Preppy Coco/CF mini/黑金球大mini', s: 'D2 阪急5-6F · 务必官网预约' },
+      { t: 'SK-II 神仙水 ×2', s: 'D2 大丸/阪神2F' },
+      { t: '植村秀卸妆油', s: 'D2 大丸2F' },
+      { t: 'MAC修容高光双色 + NARS遮瑕', s: 'D2 大丸2F' },
+      { t: 'Elégance大饼 1号+6号', s: 'D2 阪急2F' },
       { t: '馥蕾诗双萃 ×2', s: '先电询大丸；备选机场免税' },
       { t: 'IHADA药用乳液', s: 'D1 松本清' },
-      { t: '腮红、卧蚕笔', s: 'D1药妆或D4大丸试色' },
+      { t: '腮红、卧蚕笔', s: 'D1药妆或D2大丸试色' },
       { t: 'Hello Kitty指甲剪+小玩偶', s: '阪急11F / HEP FIVE 4F / 难波戎桥' },
       { t: '日本牙膏', s: 'D1 松本清' },
-      { t: '无印发圈等', s: 'D4 LUCUA 8F' },
-      { t: 'NY饼干/巧克力零食', s: 'D4阪急B1；正牌NY饼干优先机场' },
-      { t: '日本黑巧', s: 'D4/D5 阪急B1 ゴディバ等' },
-      { t: '伴手礼约20份', s: 'D4买一半+D5补齐 阪急B1/KITTE' },
+      { t: '无印发圈等', s: 'D2 LUCUA 8F' },
+      { t: 'NY饼干/巧克力零食', s: 'D2阪急B1；正牌NY饼干优先机场' },
+      { t: '日本黑巧', s: 'D2/D5 阪急B1 ゴディバ等' },
+      { t: '伴手礼约20份', s: 'D2买一半+D5补齐 阪急B1/KITTE' },
       { t: '伴手礼口红（小份）', s: '药妆/百货' },
     ],
   },
@@ -736,26 +753,18 @@ const SCHEDULE = [
     ['18:40–20:40', '晚餐：朋友预约的居酒屋', '以预约店名/时间/地址为准'],
     ['20:40–', '交通：回民宿', '按居酒屋位置返回塚本'],
   ]},
-  { day: 'D2A · 8/28 USJ（主）', rows: [
-    ['07:00–07:20', '早餐：塚本站便利店', '饭团/咖啡带走'],
-    ['07:20–08:00', '交通：塚本→USJ', '大阪换乘→环球城'],
-    ['08:00–12:00', '游玩：USJ（上午）', '任天堂/翼龙/哈利波特'],
-    ['12:00–13:00', '午餐：USJ园内餐厅', '任天堂世界或哈利波特区'],
-    ['13:00–17:30', '游玩：USJ（下午）', '小小兵、水世界等'],
-    ['17:30–18:30', '交通：USJ→道顿堀', '西九条换乘→难波'],
-    ['18:30–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 不用预约·现场排队'],
-    ['20:30–', '交通：回民宿', '难波→梅田→塚本'],
-  ]},
-  { day: 'D2B · 8/28 深度游（备选）', rows: [
-    ['07:30–08:30', '早餐：塚本站便利店', '饭团/咖啡'],
-    ['08:30–09:40', '交通：塚本→新世界', '御堂筋线→动物园前'],
-    ['09:40–11:30', '游玩：通天阁/新世界', '恵美须东1-18-6 · 需官网时段预约'],
-    ['11:30–13:00', '午餐：だるま新世界总本店', '恵美须东2-3-9 · 不可预约·现金为主'],
-    ['13:00–15:30', '游玩：阿倍野HARUKAS', '阿倍野筋1-1-43 · 展望台可选'],
-    ['15:30–17:30', '购物：难波Sanrio+爱电王', 'Hello Kitty；ビックなんば比价iPhone'],
-    ['17:30–18:00', '购物：心斋桥药妆补货', '可选·漏买再进松本清'],
-    ['18:00–20:30', '晚餐：蟹道乐道顿堀本店', '道顿堀1-6-18 · 不用预约·现场排队'],
-    ['20:30–', '交通：回民宿', '难波→梅田→塚本'],
+  { day: 'D2 · 8/28 大阪城+购物+印度菜', rows: [
+    ['08:00–09:15', '早餐：KITTE/LUCUA', '大阪站直连早午餐'],
+    ['09:30–10:30', '购物：友都八喜梅田', '大深町1-1 · iPhone+办卡咨询'],
+    ['10:30–12:30', '购物：大丸梅田2F', '香奈儿Beauty/SK2/植村秀/MAC/NARS'],
+    ['12:30–13:30', '午餐：一兰梅田阪急东通店', '堂山町3-13 · 不可预约·排队'],
+    ['13:30–14:00', '交通：梅田→大阪城', '地铁/JR'],
+    ['14:00–15:20', '游玩：大阪城天守阁', '大阪城1-1 · 建议WEB票'],
+    ['15:30–17:00', '下午茶：MIRAIZA Crossfield', '2F·正对天守阁·预约景观位'],
+    ['17:00–17:30', '交通：大阪城→梅田', '返回阪急百货'],
+    ['17:30–18:50', '购物：阪急うめだ本店', '2F大饼·5-6F香奈儿包·11F Sanrio·B1伴手礼'],
+    ['19:00–21:00', '晚餐：朋友预约的印度菜', '店名/地址/时间待补'],
+    ['21:00–', '交通：回民宿', '按餐厅位置返回塚本'],
   ]},
   { day: 'D3 · 8/29 奈良+花火', rows: [
     ['07:00–07:40', '早餐：塚本/大阪站便利店', '出发前买好带走'],
@@ -770,18 +779,17 @@ const SCHEDULE = [
     ['19:30–19:35', '游玩：神户港烟花', '约5分钟·看@kobehanabi'],
     ['19:35–21:00', '交通：神户→民宿', 'JR回塚本'],
   ]},
-  { day: 'D4 · 8/30 购物·大阪城下午茶', rows: [
-    ['08:00–09:15', '早餐：KITTE/LUCUA', '大阪站直连早午餐'],
-    ['09:30–10:30', '购物：友都八喜梅田', '大深町1-1 · iPhone+办卡咨询'],
-    ['10:30–12:30', '购物：大丸梅田2F', '香奈儿Beauty/SK2/植村秀/MAC/NARS'],
-    ['12:30–13:30', '午餐：一兰梅田阪急东通店', '堂山町3-13 · 不可预约·排队'],
-    ['13:30–14:00', '交通：梅田→大阪城', '地铁/JR'],
-    ['14:00–15:20', '游玩：大阪城天守阁', '大阪城1-1 · 建议WEB票'],
-    ['15:30–17:00', '下午茶：MIRAIZA Crossfield', '2F·正对天守阁·预约景观位'],
-    ['17:00–17:30', '交通：大阪城→梅田', '返回阪急百货'],
-    ['17:30–19:30', '购物：阪急うめだ本店', '2F大饼·5-6F香奈儿包·11F Sanrio·B1伴手礼'],
-    ['19:30–21:00', '晚餐：烧肉うしごろ梅田', 'うめきた3F · 一休预约；备选串の坊'],
-    ['21:00–', '交通：回民宿', '大阪站→塚本'],
+  { day: 'D4 · 8/30 ★USJ（已确定）', rows: [
+    ['06:15–06:35', '早餐：塚本站便利店', '饭团/咖啡带走'],
+    ['06:35–07:10', '交通：塚本→USJ', '大阪/西九条换乘→环球城'],
+    ['07:10–开园', '排队：USJ顶门', '安检·二维码备好；可能早于09:00放行'],
+    ['开园–10:45', '游玩：超级任天堂世界', '咚奇刚→马里奥赛车→耀西；入园立刻取整理券'],
+    ['10:45–13:00', '游玩：哈利波特+侏罗纪', '禁忌之旅→飞天翼龙→侏罗纪乘船'],
+    ['13:00–13:30', '午餐：USJ园内快速餐', '手机点餐；不排长餐厅'],
+    ['13:30–18:40', '游玩：大白鲨+小黄人+补漏', '看App实时排队；16:15巡游可选'],
+    ['18:50–19:50', '交通：USJ→道顿堀', '园到20:00闭；赶蟹道乐21:00最后点餐'],
+    ['20:00–21:30', '晚餐：蟹道乐道顿堀本店', '不用预约·现场排队'],
+    ['21:30–', '交通：回民宿', '难波→梅田→塚本'],
   ]},
   { day: 'D5 · 8/31 返程', rows: [
     ['06:30–07:20', '早餐：塚本便利店', '简单吃完再退房'],

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="theme-color" content="#e11d48" />
+  <title>USJ 顶门攻略 · 2026/8/30</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --paper: #fff;
+      --bg: #f5f2ff;
+      --red: #e11d48;
+      --red-dark: #9f1239;
+      --blue: #2563eb;
+      --green: #047857;
+      --yellow: #f59e0b;
+      --line: #e7e2f4;
+      --radius: 16px;
+      --safe: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, #fde7ef 0, transparent 26rem),
+        radial-gradient(circle at 95% 8%, #dbeafe 0, transparent 24rem),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      line-height: 1.55;
+      padding-bottom: calc(72px + var(--safe));
+    }
+    a { color: var(--blue); }
+    .hero {
+      padding: 22px 16px 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #9f1239, #e11d48 56%, #f59e0b);
+      box-shadow: 0 6px 24px rgba(159, 18, 57, .22);
+    }
+    .hero-inner, main { width: min(760px, 100%); margin: 0 auto; }
+    .back {
+      display: inline-flex;
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    h1 { font-size: 26px; line-height: 1.2; margin: 0; }
+    .subtitle { font-size: 13px; opacity: .92; margin-top: 8px; }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .stat {
+      padding: 10px 8px;
+      text-align: center;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+    }
+    .stat strong { display: block; font-size: 16px; }
+    .stat span { font-size: 10px; opacity: .88; }
+    .quick-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      overflow-x: auto;
+      gap: 6px;
+      padding: 9px 12px;
+      background: rgba(255,255,255,.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      scrollbar-width: none;
+    }
+    .quick-nav::-webkit-scrollbar { display: none; }
+    .quick-nav a {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      color: var(--ink);
+      background: #f6f3fb;
+      border-radius: 99px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    main { padding: 12px; }
+    .alert, .card {
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(35, 20, 70, .06);
+    }
+    .alert {
+      padding: 13px 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      font-size: 13px;
+    }
+    .card {
+      padding: 16px;
+      background: var(--paper);
+      border: 1px solid rgba(231,226,244,.9);
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      color: var(--red-dark);
+    }
+    .card h3 { margin: 16px 0 8px; font-size: 14px; }
+    .card p { margin: 7px 0; font-size: 13px; }
+    .small { font-size: 12px !important; color: var(--muted); }
+    .tag {
+      display: inline-block;
+      padding: 3px 7px;
+      margin: 0 4px 4px 0;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--red);
+    }
+    .tag.blue { background: var(--blue); }
+    .tag.green { background: var(--green); }
+    .tag.amber { background: #b45309; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 9px 10px;
+      border-radius: 11px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--blue);
+    }
+    .button.secondary { color: var(--blue); background: #eff6ff; border: 1px solid #bfdbfe; }
+    .steps { counter-reset: step; }
+    .step {
+      position: relative;
+      padding: 1px 0 14px 39px;
+      min-height: 36px;
+      font-size: 13px;
+    }
+    .step:last-child { padding-bottom: 0; }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .step::after {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 30px;
+      bottom: 2px;
+      width: 2px;
+      background: #fecdd3;
+    }
+    .step:last-child::after { display: none; }
+    .step strong { display: block; }
+    .timeline { position: relative; }
+    .slot {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .slot:last-child { border-bottom: 0; }
+    .slot time { color: var(--red); font-size: 12px; font-weight: 800; }
+    .slot strong { display: block; font-size: 14px; }
+    .slot p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+    .priority {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0edf6;
+      font-size: 13px;
+    }
+    .priority:last-child { border-bottom: 0; }
+    .rank {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--red);
+      border-radius: 9px;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .wait { color: var(--muted); font-size: 11px; text-align: right; }
+    .rules {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .rule {
+      padding: 10px 11px;
+      border-radius: 11px;
+      background: #f8fafc;
+      border-left: 3px solid var(--blue);
+      font-size: 12px;
+    }
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f0edf6;
+      font-size: 13px;
+    }
+    .check:last-child { border-bottom: 0; }
+    .check input { width: 20px; height: 20px; accent-color: var(--red); flex: 0 0 auto; }
+    .check.done span { color: #98a2b3; text-decoration: line-through; }
+    details {
+      border-top: 1px solid var(--line);
+      padding: 10px 0;
+    }
+    details:last-child { padding-bottom: 0; }
+    summary { cursor: pointer; font-size: 13px; font-weight: 700; }
+    ul { margin: 7px 0 0; padding-left: 20px; font-size: 12px; }
+    li { margin: 5px 0; }
+    .bottom {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      gap: 8px;
+      padding: 9px 12px calc(9px + var(--safe));
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .bottom a { flex: 1; }
+    @media (min-width: 660px) {
+      .hero { padding-top: 30px; }
+      .rules { grid-template-columns: 1fr 1fr; }
+      .actions { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <a class="back" href="./index.html?room=osaka2026-wxh">← 返回大阪总行程</a>
+      <h1>USJ 顶门高效攻略</h1>
+      <div class="subtitle">2026/8/30（周日）· 3人 · 任天堂 / 哈利波特 / 侏罗纪 / 小黄人</div>
+      <div class="hero-stats">
+        <div class="stat"><strong>07:10</strong><span>到闸口排队</span></div>
+        <div class="stat"><strong>09–20</strong><span>官方营业时间</span></div>
+        <div class="stat"><strong>8–12项</strong><span>合理目标</span></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="quick-nav">
+    <a href="#must">先做什么</a>
+    <a href="#plan">逐时攻略</a>
+    <a href="#app">App</a>
+    <a href="#rides">项目优先级</a>
+    <a href="#rules">动态调整</a>
+    <a href="#packing">准备清单</a>
+  </nav>
+
+  <main>
+    <div class="alert">
+      <strong>核心结论：</strong>8/30 官方营业 **09:00–20:00**（可能提前放行）。想覆盖四大园区，最稳方案是“提前约 110 分钟到门口 + 入园立即处理任天堂入场 + 热门项目用单人通道”。若预算允许，买含任天堂入场确约的 Express Pass，成功率会明显提高。
+    </div>
+
+    <section class="card" id="must">
+      <h2>入园后前 3 分钟决定成败</h2>
+      <div class="steps">
+        <div class="step">
+          <strong>过闸后立刻打开 USJ 官方 App</strong>
+          确认 3 张当日 Studio Pass 都显示为“已入园”；不要先拍照、买头箍或排饮料。
+        </div>
+        <div class="step">
+          <strong>查看任天堂世界是否可直接入场</strong>
+          若显示自由入场，沿园区指示快速步行去 SUPER NINTENDO WORLD；不要奔跑。
+        </div>
+        <div class="step">
+          <strong>若已启用管控，马上取“区域入场整理券”</strong>
+          在 App 选择 3 人和最早可用时段。2026/1/5 起整理券/抽选券仅可在官方 App 获取，且必须进园后才能领取。
+        </div>
+        <div class="step">
+          <strong>券较晚就先刷飞天翼龙</strong>
+          不要原地等任天堂时段；去侏罗纪园区排飞天翼龙，优先问 Single Rider。
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="plan">
+      <h2>逐时执行版</h2>
+      <p class="small">以下按“无 Express Pass、约 8:15–8:45 提前开园”设计。现场必须服从 App 时段与实际排队时间。</p>
+      <div class="timeline">
+        <div class="slot">
+          <time>06:15</time>
+          <div><strong>早餐 + 出发</strong><p>塚本站便利店买饭团/咖啡；约 06:35 乘 JR，经大阪/西九条到环球城。</p></div>
+        </div>
+        <div class="slot">
+          <time>07:10</time>
+          <div><strong>抵达闸口</strong><p>先过安检再排入园；手机调高亮度、3张二维码提前打开。官方 09:00 开门，但明确可能提前放行。当天营业到 <b>20:00</b>。</p></div>
+        </div>
+        <div class="slot">
+          <time>开园–10:45</time>
+          <div><strong>超级任天堂世界</strong><p>优先顺序：<b>咚奇刚疯狂矿车 → 马里奥赛车 → 耀西冒险</b>（耀西超过 30 分钟就跳过）。Power-Up Band 游戏好玩但耗时，目标是多刷项目时只做 1–2 个。</p></div>
+        </div>
+        <div class="slot">
+          <time>10:45–11:40</time>
+          <div><strong>哈利波特园区</strong><p>先禁忌之旅；鹰马飞行超过 30 分钟就跳过。顺路拍霍格沃茨、喝黄油啤酒，不排长时间商店互动。</p></div>
+        </div>
+        <div class="slot">
+          <time>11:40–13:00</time>
+          <div><strong>侏罗纪公园</strong><p>飞天翼龙优先 Single Rider；再看侏罗纪公园乘船是否 ≤35 分钟。乘船会明显湿身，手机先装防水袋。</p></div>
+        </div>
+        <div class="slot">
+          <time>13:00–13:30</time>
+          <div><strong>快速午餐</strong><p>用“スマホ de オーダー”选附近餐厅，或吃便携小食。为多玩项目，不建议中午排キノピオ・カフェ长队。</p></div>
+        </div>
+        <div class="slot">
+          <time>13:30–14:15</time>
+          <div><strong>大白鲨 / 水世界二选一</strong><p>JAWS 排队短或有 Single Rider 就坐；若当天水世界场次合适，至少提前 20 分钟入场。演出约 20 分钟，前区会湿。</p></div>
+        </div>
+        <div class="slot">
+          <time>14:15–15:35</time>
+          <div><strong>小黄人乐园</strong><p>先“小黄人疯狂乘车游”；再玩“大恶党之路”射击任务。若疯狂乘车游 >60 分钟，先做任务，傍晚再回来。</p></div>
+        </div>
+        <div class="slot">
+          <time>15:35–16:05</time>
+          <div><strong>好莱坞区捡漏</strong><p>看 App 选择 Hollywood Dream 或 SING。要“项目数”就不提前占巡游位置。</p></div>
+        </div>
+        <div class="slot">
+          <time>16:15–16:55</time>
+          <div><strong>25周年巡游（可选）</strong><p>NO LIMIT! Parade 预计 16:15、约 40 分钟。若项目优先，路边看 5–10 分钟即可，利用多数人看巡游时刷低等待项目。</p></div>
+        </div>
+        <div class="slot">
+          <time>16:15–18:40</time>
+          <div><strong>App 动态补漏 / 二刷</strong><p>补禁忌之旅、飞天翼龙、小黄人或 Hollywood Dream；18:00 后优先排当天最想玩的最后一个大项目，热门队列可能在闭园前提前截止。</p></div>
+        </div>
+        <div class="slot">
+          <time>18:50</time>
+          <div><strong>离园 → 道顿堀</strong><p>园到 20:00 闭。约 19:50–20:10 到蟹道乐现场排队。餐厅 21:00 最后点餐。若坚持玩到闭园，改吃环球城站前，不要赌蟹道乐排队。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="app">
+      <h2>必须下载：USJ 官方 App</h2>
+      <p><span class="tag">必装</span><b>Universal Studios Japan Official App</b></p>
+      <p>可看实时等待分钟数、运行/暂停状态、地图、演出时间、收藏项目，以及领取任天堂区域入场整理券/抽选券。</p>
+      <div class="actions">
+        <a class="button" href="https://www.usj.co.jp/web/ja/jp/enjoy/app" target="_blank" rel="noopener">官方下载页</a>
+        <a class="button secondary" href="https://www.usj.co.jp/web/ja/jp/enjoy/numbered-ticket/timed-entry-ticket" target="_blank" rel="noopener">整理券说明</a>
+        <a class="button secondary" href="https://www.usj.co.jp/web/ja/jp/park-guide/schedule/park-hour" target="_blank" rel="noopener">当天营业时间</a>
+        <a class="button secondary" href="https://www.usj.co.jp/web/ja/jp/park-guide/schedule/attraction-closure" target="_blank" rel="noopener">项目停运表</a>
+      </div>
+      <h3>前一晚设置</h3>
+      <ul>
+        <li>3个人都安装 App；指定 1 人主操作、另 1 人备用。</li>
+        <li>登录 Club Universal，并在 App 扫描/登记 3 张 Studio Pass 二维码。</li>
+        <li>把咚奇刚、马里奥赛车、禁忌之旅、飞天翼龙、小黄人、JAWS 加入收藏，现场直接看列表等待时间。</li>
+        <li>下载离线交通路线；准备充电宝和日本流量。不要在使用整理券前卸载 App。</li>
+      </ul>
+      <h3>整理券不是快速通行</h3>
+      <p class="small">任天堂“区域入场整理券”只保证指定时段进入园区，不减少园内项目排队。领取后不能修改/取消；数量有限，发完可能只剩抽选券。Power-Up Band 也不能替代区域入场券。</p>
+    </section>
+
+    <section class="card" id="rides">
+      <h2>项目优先级与弃排线</h2>
+      <p class="small">“弃排线”是为了最大化项目数的经验阈值，不是园方规则；超过时先去别处，之后用 App 回看。</p>
+      <div class="priority"><span class="rank">1</span><span><b>咚奇刚疯狂矿车</b><br><span class="small">任天堂 · 可问单人通道</span></span><span class="wait">早上先冲<br>&gt;100分暂缓</span></div>
+      <div class="priority"><span class="rank">2</span><span><b>马里奥赛车～库巴的挑战书</b><br><span class="small">任天堂 · 可问单人通道</span></span><span class="wait">&gt;90分暂缓</span></div>
+      <div class="priority"><span class="rank">3</span><span><b>哈利波特禁忌之旅</b><br><span class="small">霍格沃茨城内</span></span><span class="wait">&gt;70分暂缓</span></div>
+      <div class="priority"><span class="rank">4</span><span><b>飞天翼龙</b><br><span class="small">侏罗纪 · 132–198cm · 可问单人通道</span></span><span class="wait">普通&gt;70分<br>改问单人</span></div>
+      <div class="priority"><span class="rank">5</span><span><b>小黄人疯狂乘车游</b><br><span class="small">巨幕模拟器</span></span><span class="wait">&gt;60分暂缓</span></div>
+      <div class="priority"><span class="rank">6</span><span><b>侏罗纪公园乘船</b><br><span class="small">夏季明显湿身</span></span><span class="wait">&gt;35分暂缓</span></div>
+      <div class="priority"><span class="rank">7</span><span><b>JAWS 大白鲨</b><br><span class="small">Amity Village · 可问单人通道</span></span><span class="wait">&gt;40分暂缓</span></div>
+      <div class="priority"><span class="rank">8</span><span><b>耀西冒险 / 鹰马飞行</b><br><span class="small">景观好、吞吐较慢</span></span><span class="wait">&gt;30分跳过</span></div>
+    </section>
+
+    <section class="card" id="rules">
+      <h2>现场动态调整规则</h2>
+      <div class="rules">
+        <div class="rule"><b>单人通道优先</b><br>3人会被拆开且不能保证同车，但通常最省时间；并非每日、每时段开放，入口先问 Crew。</div>
+        <div class="rule"><b>按园区走，不横穿</b><br>任天堂 → 哈利波特 → 侏罗纪/水世界 → 小黄人/好莱坞，减少来回过湖。</div>
+        <div class="rule"><b>显示“暂时停运”别死等</b><br>先收藏，30–45 分钟后刷新；恢复时常有短暂低等待窗口。</div>
+        <div class="rule"><b>巡游是刷项目窗口</b><br>16:15 大量游客看巡游；以项目数为目标，就只路过看几分钟。</div>
+        <div class="rule"><b>中午不吃长餐</b><br>使用手机点餐；キノピオ・カフェ当天在店头申请优先入店，若时段不好直接放弃。</div>
+          <div class="rule"><b>闭园前队列可能提前关</b><br>19:00 前确认最后一个大项目，不要等到 19:50 才去热门入口。</div>
+      </div>
+      <h3>预算允许：Express Pass 怎么选</h3>
+      <p>Studio Pass（入园票）和 Express Pass 是两张不同的票。优先选同时覆盖 <b>咚奇刚 + 马里奥赛车 + 禁忌之旅 + 飞天翼龙</b>，并明确含“超级任天堂世界区域入场确约”的组合。产品组合和指定时段会变化，购买时以官方页面为准。</p>
+      <div class="actions">
+        <a class="button" href="https://www.usj.co.jp/web/ja/jp/tickets/lineup/expresspass" target="_blank" rel="noopener">官方 Express Pass</a>
+        <a class="button secondary" href="https://www.usj.co.jp/web/ja/jp/tickets" target="_blank" rel="noopener">官方票务</a>
+      </div>
+    </section>
+
+    <section class="card" id="packing">
+      <h2>前一晚准备清单</h2>
+      <label class="check"><input type="checkbox" data-key="app"><span>3台手机安装并更新 USJ 官方 App</span></label>
+      <label class="check"><input type="checkbox" data-key="pass"><span>主手机登记 3 张 Studio Pass；二维码另存截图</span></label>
+      <label class="check"><input type="checkbox" data-key="login"><span>登录 Club Universal，熟悉“e整理券”入口</span></label>
+      <label class="check"><input type="checkbox" data-key="battery"><span>充电宝、充电线、日本流量可用</span></label>
+      <label class="check"><input type="checkbox" data-key="heat"><span>防晒、帽子、清凉湿巾/小风扇、补盐用品</span></label>
+      <label class="check"><input type="checkbox" data-key="water"><span>水壶或每人 1 瓶 500ml 以下饮料；园内及时补水</span></label>
+      <label class="check"><input type="checkbox" data-key="wet"><span>轻便雨衣、防水袋、替换袜子（侏罗纪/水世界）</span></label>
+      <label class="check"><input type="checkbox" data-key="bag"><span>只带小包，不带行李箱；安检前清空口袋</span></label>
+      <label class="check"><input type="checkbox" data-key="alarm"><span>05:50 起床，06:35 前从塚本出发</span></label>
+    </section>
+
+    <section class="card">
+      <h2>容易踩坑</h2>
+      <details open>
+        <summary>普通票不能随便出园再进</summary>
+        <p class="small">除年票等符合条件的票种外，普通 Studio Pass 原则上不可再入园。午餐、充电、取物都在园内解决。</p>
+      </details>
+      <details>
+        <summary>目前明确停运/结束的旧项目</summary>
+        <p class="small">2026年8月官方停运表列出：Space Fantasy、Shrek 4-D、Sesame Street 4-D 无限期暂停；Sesame Street Fun World 已于 2026/5/10 结束。不要照旧攻略去排这些项目。</p>
+      </details>
+      <details>
+        <summary>Power-Up Band 值不值得买</summary>
+        <p class="small">想做钥匙挑战、Boss 战和收集金币就买；只想多坐项目则可不买。它不是门票，也不能保证进入任天堂世界。</p>
+      </details>
+      <details>
+        <summary>蟹道乐与闭园时间冲突</summary>
+        <p class="small">USJ 20:00 闭园；蟹道乐 21:00 最后点餐且你们选择现场排队。建议 18:50 离园。若当天更想玩到闭园，就把晚餐改成环球城站前，不要赌蟹道乐排队时间。</p>
+      </details>
+      <p class="small">资料核对时间：2026/8/19。营业时间、临时停运和演出时刻可能调整，请在出发前 7–10 天及当天早上再看官方 App。</p>
+    </section>
+  </main>
+
+  <div class="bottom">
+    <a class="button secondary" href="./index.html?room=osaka2026-wxh">返回总行程</a>
+    <a class="button" href="#must">回到执行重点</a>
+  </div>
+
+  <script>
+    const storageKey = 'osaka2026-usj-checks';
+    const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    document.querySelectorAll('.check input').forEach(input => {
+      input.checked = !!saved[input.dataset.key];
+      input.closest('.check').classList.toggle('done', input.checked);
+      input.addEventListener('change', () => {
+        saved[input.dataset.key] = input.checked;
+        localStorage.setItem(storageKey, JSON.stringify(saved));
+        input.closest('.check').classList.toggle('done', input.checked);
+      });
+    });
+  </script>
+</body>
+</html>
