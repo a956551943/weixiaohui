@@ -54,41 +54,46 @@
     .progress-text { font-size: 11px; margin-top: 5px; opacity: .85; }
 
     nav {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      padding: 10px 12px;
-      background: rgba(255,255,255,.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(226,232,240,.8);
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      width: 100%;
+      gap: 0;
+      padding: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 99;
     }
-    nav::-webkit-scrollbar { display: none; }
     nav button {
-      flex: 0 0 auto;
-      padding: 8px 14px;
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      padding: 12px 2px;
       border: none;
-      background: #f1f5f9;
-      font-size: 13px;
+      border-bottom: 3px solid transparent;
+      background: #fff;
+      font-size: 11px;
       color: var(--muted);
       cursor: pointer;
-      border-radius: 99px;
       transition: all .2s;
-      white-space: nowrap;
+      text-align: center;
       font-weight: 500;
+      line-height: 1.25;
+      border-radius: 0;
+    }
+    nav button + button {
+      border-left: 1px solid var(--border);
     }
     nav button.active {
-      background: linear-gradient(135deg, #2563eb, #3b82f6);
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(37,99,235,.35);
+      background: #eff6ff;
+      color: var(--primary-dark);
+      font-weight: 700;
+      border-bottom-color: var(--primary);
+      box-shadow: none;
     }
 
-    main { padding: 14px 12px 20px; max-width: 520px; margin: 0 auto; }
+    main { padding: 14px 16px 20px; max-width: none; width: 100%; margin: 0; }
     .panel { display: none; animation: fadeIn .25s ease; }
     .panel.active { display: block; }
     @keyframes fadeIn {
@@ -566,8 +571,18 @@
     .feature-link span { display: block; margin-top: 2px; font-size: 11px; opacity: .92; }
     .feature-link b { flex: 0 0 auto; font-size: 18px; opacity: .9; }
 
+    nav button small {
+      display: block;
+      font-size: 9px;
+      font-weight: 500;
+      opacity: .75;
+      margin-top: 2px;
+    }
+    nav button.active small { opacity: .85; }
+
     @media (min-width: 640px) {
-      main { max-width: 560px; padding: 16px; }
+      nav button { font-size: 13px; padding: 14px 4px; }
+      nav button small { font-size: 10px; }
     }
   </style>
   <script>
@@ -594,12 +609,12 @@
 </header>
 
 <nav>
-  <button class="active" data-tab="checklist">准备清单</button>
-  <button data-tab="d1">D1 8/27</button>
-  <button data-tab="d2">D2 8/28</button>
-  <button data-tab="d3">D3 8/29</button>
-  <button data-tab="d4">D4 8/30</button>
-  <button data-tab="d5">D5 8/31</button>
+  <button class="active" data-tab="checklist">清单</button>
+  <button data-tab="d1">D1<br><small>8/27</small></button>
+  <button data-tab="d2">D2<br><small>8/28</small></button>
+  <button data-tab="d3">D3<br><small>8/29</small></button>
+  <button data-tab="d4">D4<br><small>8/30</small></button>
+  <button data-tab="d5">D5<br><small>8/31</small></button>
 </nav>
 
 <main>
