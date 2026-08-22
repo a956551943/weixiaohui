@@ -7,61 +7,62 @@
   <title>大阪 5天4晚 · 出行计划</title>
   <style>
     :root {
-      --bg: #f0f4f8;
+      --bg: #eef2f6;
       --card: #fff;
-      --primary: #2563eb;
-      --primary-dark: #1e40af;
-      --text: #1e293b;
+      --primary: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --text: #0f172a;
       --muted: #64748b;
       --border: #e2e8f0;
-      --done: #dcfce7;
-      --done-border: #86efac;
-      --warn: #fff7ed;
-      --radius: 12px;
+      --done: #ecfdf5;
+      --done-border: #6ee7b7;
+      --radius: 16px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 16px rgba(15,23,42,.06);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
+      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 120px);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.55;
       padding-bottom: calc(72px + var(--safe-bottom));
+      -webkit-font-smoothing: antialiased;
     }
     header {
-      background: linear-gradient(135deg, #1e40af, #2563eb);
+      background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 55%, #3b82f6 100%);
       color: #fff;
-      padding: 20px 16px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(30,64,175,.25);
+      padding: 18px 16px 14px;
+      box-shadow: 0 4px 20px rgba(37,99,235,.25);
     }
-    header h1 { font-size: 20px; font-weight: 700; }
-    header .meta { font-size: 12px; opacity: .9; margin-top: 6px; }
+    header h1 { font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+    header .meta { font-size: 12px; opacity: .88; margin-top: 4px; }
     .progress-bar {
-      margin-top: 12px;
-      background: rgba(255,255,255,.25);
+      margin-top: 10px;
+      background: rgba(255,255,255,.22);
       border-radius: 99px;
-      height: 6px;
+      height: 5px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: #86efac;
+      background: linear-gradient(90deg, #86efac, #4ade80);
       border-radius: 99px;
       transition: width .3s;
       width: 0%;
     }
-    .progress-text { font-size: 11px; margin-top: 4px; opacity: .85; }
+    .progress-text { font-size: 11px; margin-top: 5px; opacity: .85; }
 
     nav {
       display: flex;
+      gap: 6px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226,232,240,.8);
       position: sticky;
       top: 0;
       z-index: 99;
@@ -69,39 +70,48 @@
     nav::-webkit-scrollbar { display: none; }
     nav button {
       flex: 0 0 auto;
-      padding: 12px 14px;
+      padding: 8px 14px;
       border: none;
-      background: none;
+      background: #f1f5f9;
       font-size: 13px;
       color: var(--muted);
       cursor: pointer;
-      border-bottom: 2px solid transparent;
+      border-radius: 99px;
       transition: all .2s;
       white-space: nowrap;
+      font-weight: 500;
     }
     nav button.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
       font-weight: 600;
+      box-shadow: 0 2px 8px rgba(37,99,235,.35);
     }
 
-    main { padding: 12px; max-width: 640px; margin: 0 auto; }
-    .panel { display: none; }
+    main { padding: 14px 12px 20px; max-width: 520px; margin: 0 auto; }
+    .panel { display: none; animation: fadeIn .25s ease; }
     .panel.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
 
     .card {
       background: var(--card);
       border-radius: var(--radius);
-      padding: 14px;
+      padding: 16px;
       margin-bottom: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.8);
     }
     .card h2 {
       font-size: 15px;
-      color: var(--primary-dark);
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #eff6ff;
+      color: var(--text);
+      margin-bottom: 12px;
+      padding-bottom: 0;
+      border: none;
+      font-weight: 700;
+      letter-spacing: -.01em;
     }
     .card h3 {
       font-size: 13px;
@@ -112,29 +122,31 @@
     .card h3:first-of-type { margin-top: 0; }
 
     .hint {
-      background: var(--warn);
-      border-left: 3px solid #f59e0b;
-      padding: 10px 12px;
-      font-size: 12px;
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border: 1px solid #fde68a;
+      padding: 12px 14px;
+      font-size: 13px;
       color: #92400e;
-      border-radius: 0 8px 8px 0;
-      margin-bottom: 12px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      line-height: 1.5;
     }
 
     .check-item {
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 8px;
-      transition: background .2s;
+      transition: all .2s;
+      background: #fafbfc;
     }
     .check-item.done { background: var(--done); border-color: var(--done-border); }
     .check-item input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       margin-top: 2px;
       flex-shrink: 0;
       accent-color: var(--primary);
@@ -142,12 +154,12 @@
     }
     .check-body { flex: 1; min-width: 0; }
     .check-title { font-size: 14px; font-weight: 500; }
-    .check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .check-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
     .check-fields {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 8px;
+      margin-top: 10px;
     }
     .check-fields.cols3 { grid-template-columns: 1fr 1fr 1fr; }
     .check-fields.full { grid-template-columns: 1fr; }
@@ -155,75 +167,59 @@
       display: block;
       font-size: 10px;
       color: var(--muted);
-      margin-bottom: 2px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
     }
     .field input, .field textarea {
       width: 100%;
-      padding: 8px 10px;
+      padding: 9px 11px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 13px;
-      background: #fafafa;
+      background: #fff;
       -webkit-appearance: none;
     }
     .field input:focus, .field textarea:focus {
       outline: none;
       border-color: var(--primary);
-      background: #fff;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
     }
     .field textarea { min-height: 60px; resize: vertical; }
 
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       font-size: 12px;
       margin-top: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
     th {
-      background: var(--primary-dark);
-      color: #fff;
-      padding: 8px 6px;
+      background: #f1f5f9;
+      color: var(--text);
+      padding: 10px 8px;
       text-align: left;
       font-weight: 600;
+      font-size: 11px;
     }
     td {
-      padding: 8px 6px;
-      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+      border-top: 1px solid var(--border);
       vertical-align: top;
+      background: #fff;
     }
-    tr:nth-child(even) td { background: #f8fafc; }
-
-    .day-card {
-      border-left: 4px solid var(--primary);
-      padding-left: 12px;
-      margin-bottom: 16px;
-    }
-    .day-card .day-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--primary-dark);
-      margin-bottom: 8px;
-    }
-    .timeline-row {
-      display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 8px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 13px;
-    }
-    .timeline-row:last-child { border-bottom: none; }
-    .time { color: var(--primary); font-weight: 600; font-size: 11px; }
-    .place { font-weight: 500; }
-    .desc { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    tr:nth-child(even) td { background: #fafbfc; }
 
     .info-grid {
       display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 4px 10px;
+      grid-template-columns: 76px 1fr;
+      gap: 6px 10px;
       font-size: 13px;
     }
-    .info-grid dt { color: var(--muted); }
+    .info-grid dt { color: var(--muted); font-size: 12px; }
     .info-grid dd { font-weight: 500; }
 
     .fab-bar {
@@ -231,7 +227,8 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--card);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px);
       border-top: 1px solid var(--border);
       padding: 10px 12px calc(10px + var(--safe-bottom));
       display: flex;
@@ -240,26 +237,30 @@
     }
     .fab-bar button {
       flex: 1;
-      padding: 12px;
+      padding: 13px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-save { background: var(--primary); color: #fff; }
+    .btn-save {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(37,99,235,.3);
+    }
     .btn-reset {
       background: #f1f5f9;
       color: var(--muted);
       flex: 0 0 auto;
-      padding: 12px 16px;
+      padding: 13px 16px;
     }
     .toast {
       position: fixed;
       bottom: 80px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: #1e293b;
+      background: #0f172a;
       color: #fff;
       padding: 10px 20px;
       border-radius: 99px;
@@ -268,6 +269,7 @@
       transition: all .3s;
       pointer-events: none;
       z-index: 200;
+      box-shadow: var(--shadow);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .sync-bar {
@@ -279,92 +281,183 @@
       flex-wrap: wrap;
     }
     .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex-shrink: 0; }
-    .sync-dot.on { background: #86efac; }
+    .sync-dot.on { background: #4ade80; }
     .sync-dot.busy { background: #fbbf24; }
     .sync-dot.off { background: #94a3b8; }
     .btn-share {
-      background: rgba(255,255,255,.2);
-      border: 1px solid rgba(255,255,255,.4);
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
       color: #fff;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 99px;
       font-size: 11px;
       cursor: pointer;
     }
     .ref-note { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
-    .day-panel-head { margin-bottom: 12px; }
-    .day-panel-head h2 {
-      font-size: 17px;
-      color: var(--primary-dark);
-      margin-bottom: 4px;
-      border: none;
-      padding: 0;
-    }
-    .day-panel-head .day-date { font-size: 12px; color: var(--muted); }
 
-    .step-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: #fff;
+    /* ── 逐日行程 ── */
+    #panel-d1 { --day-accent: #3b82f6; --day-soft: #eff6ff; }
+    #panel-d2 { --day-accent: #8b5cf6; --day-soft: #f5f3ff; }
+    #panel-d3 { --day-accent: #ec4899; --day-soft: #fdf2f8; }
+    #panel-d4 { --day-accent: #f59e0b; --day-soft: #fffbeb; }
+    #panel-d5 { --day-accent: #10b981; --day-soft: #ecfdf5; }
+
+    .day-hero {
+      background: linear-gradient(135deg, var(--day-accent) 0%, color-mix(in srgb, var(--day-accent) 80%, #fff) 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px color-mix(in srgb, var(--day-accent) 35%, transparent);
     }
-    .step-head {
+    .day-hero-top {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 8px;
       margin-bottom: 8px;
     }
-    .step-time {
+    .day-badge {
       font-size: 11px;
       font-weight: 700;
-      color: var(--primary);
-      white-space: nowrap;
-      min-width: 72px;
+      background: rgba(255,255,255,.22);
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: .03em;
+    }
+    .day-hero-date { font-size: 12px; opacity: .9; }
+    .day-hero-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+    .day-hero-hint {
+      font-size: 12px;
+      line-height: 1.55;
+      opacity: .92;
+      background: rgba(0,0,0,.12);
+      padding: 10px 12px;
+      border-radius: 10px;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 4px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--day-accent), var(--border));
+      border-radius: 2px;
+      opacity: .35;
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .step-item:last-child { margin-bottom: 0; }
+
+    .step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--day-accent);
+      border: 3px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--day-accent);
+      margin-top: 14px;
+      margin-left: 5px;
+      flex-shrink: 0;
+    }
+    .step-item.type-交通 .step-dot { background: #3b82f6; box-shadow: 0 0 0 2px #3b82f6; }
+    .step-item.type-购物 .step-dot { background: #ec4899; box-shadow: 0 0 0 2px #ec4899; }
+    .step-item.type-游玩 .step-dot { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
+    .step-item.type-午餐 .step-dot,
+    .step-item.type-晚餐 .step-dot,
+    .step-item.type-早餐 .step-dot,
+    .step-item.type-下午茶 .step-dot { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+    .step-item.type-住宿 .step-dot { background: #8b5cf6; box-shadow: 0 0 0 2px #8b5cf6; }
+
+    .step-body {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(226,232,240,.6);
+    }
+
+    .step-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .step-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--day-accent);
+      font-variant-numeric: tabular-nums;
     }
     .step-type {
       font-size: 10px;
       font-weight: 600;
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: 99px;
-      background: #eff6ff;
-      color: var(--primary-dark);
-      white-space: nowrap;
+      background: var(--day-soft);
+      color: var(--day-accent);
     }
-    .step-type.交通 { background: #dbeafe; }
-    .step-type.购物 { background: #fce7f3; color: #9d174d; }
-    .step-type.游玩 { background: #dcfce7; color: #166534; }
-    .step-type.午餐, .step-type.晚餐, .step-type.早餐, .step-type.下午茶 { background: #ffedd5; color: #9a3412; }
-    .step-type.住宿 { background: #f3e8ff; color: #6b21a8; }
-    .step-title { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.35; }
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -.01em;
+      margin-bottom: 2px;
+    }
 
-    .route-grid {
-      display: grid;
+    .meta-chips {
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px;
-      font-size: 12px;
-      margin: 8px 0;
+      margin: 10px 0 4px;
     }
-    .route-grid div {
-      display: grid;
-      grid-template-columns: 56px 1fr;
-      gap: 6px;
+    .meta-chip {
+      font-size: 11px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 9px;
+      line-height: 1.35;
     }
-    .route-grid dt { color: var(--muted); }
-    .route-grid dd { font-weight: 500; }
+    .meta-chip b {
+      color: var(--muted);
+      font-weight: 500;
+      margin-right: 4px;
+    }
 
     .route-steps {
-      margin: 8px 0;
-      padding: 8px 10px;
-      background: #f8fafc;
-      border-radius: 8px;
+      margin: 10px 0 4px;
+      padding: 10px 12px 10px 28px;
+      background: var(--day-soft);
+      border-radius: 10px;
       font-size: 12px;
-      line-height: 1.6;
+      line-height: 1.65;
+      color: var(--text);
     }
-    .route-steps li { margin-left: 16px; }
+    .route-steps li { margin-bottom: 2px; }
+    .route-steps li::marker { color: var(--day-accent); font-weight: 700; }
 
     .step-map {
-      margin: 10px 0 6px;
-      border-radius: 10px;
+      margin: 10px 0 4px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
       background: #f1f5f9;
@@ -373,90 +466,109 @@
       display: block;
       width: 100%;
       height: auto;
-      min-height: 120px;
+      min-height: 100px;
+      max-height: 180px;
       object-fit: cover;
     }
     .step-map .map-caption {
-      padding: 6px 10px;
+      padding: 7px 10px;
       font-size: 10px;
       color: var(--muted);
-      background: #f8fafc;
+      background: #fafbfc;
+      text-align: center;
     }
 
     .step-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
+      gap: 8px;
+      margin-top: 10px;
     }
     .step-actions a {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 8px 14px;
+      border-radius: 10px;
       font-size: 12px;
       font-weight: 600;
       text-decoration: none;
-      background: var(--primary);
+      background: var(--day-accent);
       color: #fff;
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--day-accent) 30%, transparent);
     }
     .step-actions a.secondary {
       background: #f1f5f9;
-      color: var(--primary-dark);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid var(--border);
     }
     .step-note {
       font-size: 12px;
       color: var(--muted);
-      margin-top: 8px;
-      line-height: 1.5;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      line-height: 1.55;
     }
-    .step-note b { color: var(--text); }
+    .step-note b { color: var(--text); font-weight: 600; }
 
-    .ref-block { margin-top: 16px; }
-    .ref-block h3 {
-      font-size: 13px;
-      margin: 12px 0 8px;
-      color: var(--primary-dark);
-    }
     .pay-badge {
       display: inline-block;
       font-size: 11px;
-      background: #fef3c7;
-      color: #92400e;
-      padding: 2px 8px;
-      border-radius: 6px;
-      margin-top: 4px;
+      background: #fef9c3;
+      color: #854d0e;
+      padding: 4px 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      border: 1px solid #fde047;
     }
 
+    .ref-card { margin-top: 4px; }
+    .ref-block { margin-top: 14px; }
+    .ref-block:first-child { margin-top: 0; }
+    .ref-block h3 {
+      font-size: 12px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .lodging-card {
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    }
     .lodging-card dl {
       display: grid;
-      grid-template-columns: 72px 1fr;
-      gap: 4px 10px;
+      grid-template-columns: 68px 1fr;
+      gap: 8px 10px;
       font-size: 13px;
     }
-    .lodging-card dt { color: var(--muted); }
+    .lodging-card dt { color: var(--muted); font-size: 12px; }
     .lodging-card dd { font-weight: 500; }
 
-    .panel[id^="panel-d"] table a { color: var(--primary); word-break: break-all; }
-    .panel[id^="panel-d"] td { font-size: 12px; line-height: 1.45; }
+    .panel[id^="panel-d"] table a { color: var(--day-accent, var(--primary)); word-break: break-all; }
 
     .feature-link {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 12px;
-      padding: 14px;
+      margin-bottom: 14px;
+      padding: 14px 16px;
       color: #fff;
       text-decoration: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #9f1239, #e11d48 60%, #f59e0b);
-      box-shadow: 0 4px 14px rgba(159,18,57,.2);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #b45309, #f59e0b 50%, #fbbf24);
+      box-shadow: 0 4px 16px rgba(245,158,11,.35);
     }
-    .feature-link strong { display: block; font-size: 15px; }
-    .feature-link span { display: block; margin-top: 2px; font-size: 11px; opacity: .9; }
-    .feature-link b { flex: 0 0 auto; font-size: 20px; }
+    .feature-link strong { display: block; font-size: 15px; font-weight: 700; }
+    .feature-link span { display: block; margin-top: 2px; font-size: 11px; opacity: .92; }
+    .feature-link b { flex: 0 0 auto; font-size: 18px; opacity: .9; }
+
+    @media (min-width: 640px) {
+      main { max-width: 560px; padding: 16px; }
+    }
   </style>
   <script>
     window.TRIP_SYNC = {
@@ -821,26 +933,26 @@ function esc(s) {
 }
 
 function renderStepCard(step) {
-  const typeCls = esc(step.type || '其他');
-  let html = `<article class="step-card">
-    <div class="step-head">
-      <span class="step-time">${esc(step.time)}</span>
-      <span class="step-type ${typeCls}">${typeCls}</span>
-      <div class="step-title">${esc(step.title)}</div>
-    </div>`;
+  const type = step.type || '其他';
+  const typeCls = esc(type);
+  let html = `<article class="step-item type-${typeCls}">
+    <div class="step-dot" aria-hidden="true"></div>
+    <div class="step-body">
+      <div class="step-meta">
+        <span class="step-time">${esc(step.time)}</span>
+        <span class="step-type">${typeCls}</span>
+      </div>
+      <h3 class="step-title">${esc(step.title)}</h3>`;
 
-  if (step.from || step.to || step.transport) {
-    html += '<dl class="route-grid">';
-    if (step.from) html += `<div><dt>起点</dt><dd>${esc(step.from)}</dd></div>`;
-    if (step.to) html += `<div><dt>终点</dt><dd>${esc(step.to)}</dd></div>`;
-    if (step.transport) html += `<div><dt>交通</dt><dd>${esc(step.transport)}</dd></div>`;
-    if (step.duration) html += `<div><dt>耗时</dt><dd>${esc(step.duration)}</dd></div>`;
-    if (step.cost) html += `<div><dt>费用</dt><dd>${esc(step.cost)}</dd></div>`;
-    if (step.pay) html += `<div><dt>付款</dt><dd>${esc(step.pay)}</dd></div>`;
-    html += '</dl>';
-  } else if (step.pay) {
-    html += `<span class="pay-badge">付款：${esc(step.pay)}${step.cost ? ' · ' + esc(step.cost) : ''}</span>`;
-  }
+  const chips = [];
+  if (step.from) chips.push(`<span class="meta-chip"><b>起点</b>${esc(step.from)}</span>`);
+  if (step.to) chips.push(`<span class="meta-chip"><b>终点</b>${esc(step.to)}</span>`);
+  if (step.transport) chips.push(`<span class="meta-chip"><b>交通</b>${esc(step.transport)}</span>`);
+  if (step.duration) chips.push(`<span class="meta-chip"><b>耗时</b>${esc(step.duration)}</span>`);
+  if (step.cost && step.cost !== '—') chips.push(`<span class="meta-chip"><b>费用</b>${esc(step.cost)}</span>`);
+  if (step.pay && step.pay !== '—') chips.push(`<span class="meta-chip"><b>付款</b>${esc(step.pay)}</span>`);
+  if (chips.length) html += `<div class="meta-chips">${chips.join('')}</div>`;
+  else if (step.pay) html += `<span class="pay-badge">付款 ${esc(step.pay)}${step.cost && step.cost !== '—' ? ' · ' + esc(step.cost) : ''}</span>`;
 
   if (step.route && step.route.length) {
     html += '<ol class="route-steps">' + step.route.map(r => `<li>${r}</li>`).join('') + '</ol>';
@@ -849,8 +961,8 @@ function renderStepCard(step) {
   if (step.mapImg) {
     html += `<div class="step-map">
       <img src="${esc(step.mapImg)}" alt="路线示意图" loading="lazy" referrerpolicy="no-referrer"
-        onerror="this.parentElement.querySelector('.map-caption').textContent='地图加载失败，请点下方 Google 导航'; this.style.display='none'" />
-      <div class="map-caption">路线示意图 · 红/蓝点为起终点大致位置</div>
+        onerror="this.parentElement.querySelector('.map-caption').textContent='地图加载失败，请点下方导航按钮'; this.style.display='none'" />
+      <div class="map-caption">路线示意图</div>
     </div>`;
   }
 
@@ -859,7 +971,7 @@ function renderStepCard(step) {
   if (step.mapLink || (step.links && step.links.length)) {
     html += '<div class="step-actions">';
     if (step.mapLink) {
-      html += `<a href="${esc(step.mapLink)}" target="_blank" rel="noopener">📍 打开 Google 导航</a>`;
+      html += `<a href="${esc(step.mapLink)}" target="_blank" rel="noopener">Google 导航</a>`;
     }
     (step.links || []).forEach(l => {
       html += `<a class="secondary" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`;
@@ -867,7 +979,7 @@ function renderStepCard(step) {
     html += '</div>';
   }
 
-  html += '</article>';
+  html += '</div></article>';
   return html;
 }
 
@@ -882,24 +994,25 @@ function renderDayPanel(day) {
   const el = document.getElementById('panel-' + day.id);
   if (!el) return;
 
-  let html = `<div class="hint">${day.hint}</div>`;
+  let html = `<div class="day-hero">
+    <div class="day-hero-top">
+      <span class="day-badge">${esc(day.tab)}</span>
+      <span class="day-hero-date">${esc(day.date)}</span>
+    </div>
+    <h2 class="day-hero-title">${esc(day.title)}</h2>
+    <p class="day-hero-hint">${day.hint}</p>
+  </div>`;
 
   if (day.featureLink) {
     html += `<a class="feature-link" href="${esc(day.featureLink.href)}">
       <span><strong>${esc(day.featureLink.label)}</strong></span><b>→</b></a>`;
   }
 
-  html += `<div class="card">
-    <div class="day-panel-head">
-      <h2>${esc(day.title)}</h2>
-      <div class="day-date">${esc(day.date)}</div>
-    </div>
-    ${day.steps.map(renderStepCard).join('')}
-  </div>`;
+  html += `<div class="timeline">${day.steps.map(renderStepCard).join('')}</div>`;
 
   const refs = day.refs || {};
   if (refs.meals || refs.shopping || refs.spots) {
-    html += '<div class="card"><h2>当日参考</h2>';
+    html += '<div class="card ref-card"><h2>当日参考</h2>';
     html += renderRefTable('餐饮', refs.meals, [
       { key: 'slot', label: '餐次' },
       { key: 'place', label: '地点' },
@@ -911,10 +1024,10 @@ function renderDayPanel(day) {
       { key: 'shop', label: '店铺' },
       { key: 'how', label: '怎么买' },
     ]);
-    html += renderRefTable('景点/门票', refs.spots, [
+    html += renderRefTable('景点 / 门票', refs.spots, [
       { key: 'name', label: '名称' },
       { key: 'addr', label: '地址' },
-      { key: 'ticket', label: '门票/说明' },
+      { key: 'ticket', label: '门票' },
     ]);
     html += '</div>';
   }
