@@ -57,22 +57,27 @@
 
     nav {
       display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       background: var(--card);
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
       z-index: 99;
     }
+    nav::-webkit-scrollbar { display: none; }
     nav button {
-      flex: 1;
-      padding: 14px 8px;
+      flex: 0 0 auto;
+      padding: 12px 14px;
       border: none;
       background: none;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
       transition: all .2s;
+      white-space: nowrap;
     }
     nav button.active {
       color: var(--primary);
@@ -287,8 +292,155 @@
       cursor: pointer;
     }
     .ref-note { font-size: 12px; color: var(--muted); margin: 0 0 10px; }
-    #panel-ref table a { color: var(--primary); word-break: break-all; }
-    #panel-ref td { font-size: 12px; line-height: 1.45; }
+    .day-panel-head { margin-bottom: 12px; }
+    .day-panel-head h2 {
+      font-size: 17px;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+      border: none;
+      padding: 0;
+    }
+    .day-panel-head .day-date { font-size: 12px; color: var(--muted); }
+
+    .step-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fff;
+    }
+    .step-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .step-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      white-space: nowrap;
+      min-width: 72px;
+    }
+    .step-type {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: #eff6ff;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+    .step-type.交通 { background: #dbeafe; }
+    .step-type.购物 { background: #fce7f3; color: #9d174d; }
+    .step-type.游玩 { background: #dcfce7; color: #166534; }
+    .step-type.午餐, .step-type.晚餐, .step-type.早餐, .step-type.下午茶 { background: #ffedd5; color: #9a3412; }
+    .step-type.住宿 { background: #f3e8ff; color: #6b21a8; }
+    .step-title { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.35; }
+
+    .route-grid {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      margin: 8px 0;
+    }
+    .route-grid div {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 6px;
+    }
+    .route-grid dt { color: var(--muted); }
+    .route-grid dd { font-weight: 500; }
+
+    .route-steps {
+      margin: 8px 0;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .route-steps li { margin-left: 16px; }
+
+    .step-map {
+      margin: 10px 0 6px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+    }
+    .step-map img {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 120px;
+      object-fit: cover;
+    }
+    .step-map .map-caption {
+      padding: 6px 10px;
+      font-size: 10px;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+
+    .step-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .step-actions a {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      background: var(--primary);
+      color: #fff;
+    }
+    .step-actions a.secondary {
+      background: #f1f5f9;
+      color: var(--primary-dark);
+    }
+    .step-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .step-note b { color: var(--text); }
+
+    .ref-block { margin-top: 16px; }
+    .ref-block h3 {
+      font-size: 13px;
+      margin: 12px 0 8px;
+      color: var(--primary-dark);
+    }
+    .pay-badge {
+      display: inline-block;
+      font-size: 11px;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+
+    .lodging-card dl {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 4px 10px;
+      font-size: 13px;
+    }
+    .lodging-card dt { color: var(--muted); }
+    .lodging-card dd { font-weight: 500; }
+
+    .panel[id^="panel-d"] table a { color: var(--primary); word-break: break-all; }
+    .panel[id^="panel-d"] td { font-size: 12px; line-height: 1.45; }
+
     .feature-link {
       display: flex;
       align-items: center;
@@ -331,14 +483,31 @@
 
 <nav>
   <button class="active" data-tab="checklist">准备清单</button>
-  <button data-tab="schedule">逐日行程</button>
-  <button data-tab="ref">参考信息</button>
+  <button data-tab="d1">D1 8/27</button>
+  <button data-tab="d2">D2 8/28</button>
+  <button data-tab="d3">D3 8/29</button>
+  <button data-tab="d4">D4 8/30</button>
+  <button data-tab="d5">D5 8/31</button>
 </nav>
 
 <main>
   <!-- 清单 -->
   <section class="panel active" id="panel-checklist">
     <div class="hint" id="syncHint">勾选自动保存。配置 Supabase 后可多人实时同步，见「多人共享设置.md」。</div>
+
+    <div class="card lodging-card">
+      <h2>航班与住宿（全程）</h2>
+      <dl>
+        <dt>去程</dt><dd>8/27 08:10 → 11:35 · 关西 T1</dd>
+        <dt>返程</dt><dd>8/31 12:35 → 14:20</dd>
+        <dt>民宿</dt><dd>柏里 西淀川区 宿の四 · 555-0022</dd>
+        <dt>最近站</dt><dd>JR 塚本（步行 5–8 分）</dd>
+        <dt>入住</dt><dd>16:00 后 · 不含早</dd>
+        <dt>退房</dt><dd>8/31 10:00 前</dd>
+        <dt>交通卡</dt><dd>抵达机场办 ICOCA，全程刷卡</dd>
+        <dt>支付</dt><dd>ICOCA + 现金零钱 + 信用卡</dd>
+      </dl>
+    </div>
 
     <div class="card" id="section-booking"></div>
     <div class="card" id="section-clothes"></div>
@@ -351,109 +520,12 @@
     <div class="card" id="section-memo"></div>
   </section>
 
-  <!-- 行程 -->
-  <section class="panel" id="panel-schedule">
-    <a class="feature-link" href="./usj.html">
-      <span><strong>USJ 顶门高效攻略</strong><span>8/30 顶门进、顶门出 · 任天堂、哈利波特、侏罗纪、小黄人</span></span>
-      <b>→</b>
-    </a>
-    <p class="hint">除 USJ 顶门外：每天 7:30 起床、化妆约 30 分、约 8:30 出门。行程已留空档。</p>
-    <div class="card" id="section-schedule"></div>
-    <div class="card">
-      <h2>航班与住宿</h2>
-      <dl class="info-grid">
-        <dt>去程</dt><dd>8/27 08:10 → 11:35 · 关西 T1</dd>
-        <dt>返程</dt><dd>8/31 12:35 → 14:20</dd>
-        <dt>民宿</dt><dd>柏里 西淀川区 宿の四 · 555-0022</dd>
-        <dt>车站</dt><dd>JR 塚本站步行约 5–8 分</dd>
-        <dt>入住</dt><dd>16:00 后 · 不含早</dd>
-        <dt>退房</dt><dd>8/31 10:00 前</dd>
-      </dl>
-    </div>
-  </section>
-
-  <!-- 参考 -->
-  <section class="panel" id="panel-ref">
-    <div class="hint">地址可直接复制到 Google Maps 搜索。购票/预约链接可点开。</div>
-
-    <div class="card">
-      <h2>每天吃饭（早中晚 · 详细地址）</h2>
-      <p class="ref-note">早餐通用：JR 塚本站出站便利店/超市饭团咖啡（不用预约）</p>
-      <table>
-        <tr><th>日·餐</th><th>店 · 详细地址</th><th>预约</th></tr>
-        <tr><td>D1 午A</td><td>机场便利店/T1美食街<br>关西机场 T1</td><td>不用·先吃再走</td></tr>
-        <tr><td>D1 午B</td><td>宮本むなし JR塚本駅前<br>淀川区塚本 2-28-23<br>东口步行约1分<br>备选：站前便利店/吉野家塚本2-28-2</td><td>不用<br><a href="https://store.srsholdings.com/m-munashi/detail/5116/" target="_blank" rel="noopener">店铺页</a></td></tr>
-        <tr><td>D1 晚</td><td>朋友已预约的居酒屋<br>店名/地址/时间待补<br>饭后心斋桥·道顿堀打卡</td><td>已预约</td></tr>
-        <tr><td>D2 午</td><td>一兰梅田阪急东通店<br>北区堂山町 3-13</td><td>不可预约·排队<br><a href="https://ichiran.com/shop/kinki/umeda-hankyu/" target="_blank" rel="noopener">官方店页</a></td></tr>
-        <tr><td>D2 晚</td><td>朋友预约的印度菜餐厅<br>店名/地址/时间待补<br>饭后蓝天大厦夜景</td><td>已预约</td></tr>
-        <tr><td>D3 午</td><td>JO-TERRACE OSAKA<br>中央区大阪城 3-1</td><td>现场选·不用约<br><a href="https://jo-terrace.jp/" target="_blank" rel="noopener">设施介绍</a></td></tr>
-        <tr><td>D3 下午茶</td><td>Crossfield<br>大阪城1-1 MIRAIZA 2F<br>正对天守阁</td><td>约15:00·备注景观位<br><a href="https://www.landmark-osaka.com/crossfield/" target="_blank" rel="noopener">官方预约</a><br>06-6941-7100</td></tr>
-        <tr><td>D3 晚</td><td>元町便利店外带<br>→美利坚公园看花火<br>备选：Night Mirage / 港塔</td><td>花火看 <a href="https://www.instagram.com/kobehanabi/" target="_blank" rel="noopener">@kobehanabi</a><br>风大可当天取消</td></tr>
-        <tr><td>D4 午</td><td>USJ 园内<br>此花区樱岛 2</td><td>多数现场 / App点餐</td></tr>
-        <tr><td>D4 晚</td><td>USJ 园内吃完再玩到闭园<br>此花区樱岛 2</td><td>App点餐·不用约</td></tr>
-        <tr><td>D5 早/午</td><td>塚本便利店 → 关西机场 T1</td><td>不用</td></tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>景点（地址 · 购票链接）</h2>
-      <table>
-        <tr><th>景点 · 地址</th><th>怎么买</th></tr>
-        <tr><td>USJ<br>此花区樱岛 2</td><td><a href="https://www.usj.co.jp/web/ja/jp/tickets/lineup" target="_blank" rel="noopener">官方门票</a><br><a href="https://www.usj.co.jp/web/ja/jp/tickets/lineup/expresspass" target="_blank" rel="noopener">Express Pass</a></td></tr>
-        <tr><td>通天阁（本次未排）<br>浪速区恵美须东 1-18-6</td><td>需时段预约<br><a href="https://www.tsutenkaku.co.jp/" target="_blank" rel="noopener">官网→事前予約</a></td></tr>
-        <tr><td>心斋桥·道顿堀夜打卡<br>戎桥 / 道顿堀1丁目</td><td>D1晚饭后 · 免费拍照<br>格力高、蟹道乐招牌</td></tr>
-        <tr><td>HEP FIVE 摩天轮<br>北区角田町 5-15</td><td>D2下午确定去 · 现场约¥800<br>阪急东口步行5分<br><a href="https://www.hepfive.jp/" target="_blank" rel="noopener">设施页</a></td></tr>
-        <tr><td>神户港周末烟花<br>美利坚公园（波止场町）</td><td>排期有：8/29 19:30 约5分钟<br>当天以IG为准，风大可取消<br><a href="https://www.instagram.com/kobehanabi/" target="_blank" rel="noopener">@kobehanabi</a></td></tr>
-        <tr><td>备选 Night Mirage<br>同美利坚公园</td><td>免费光影秀 · 约19:15/19:45<br><a href="https://www.feel-kobe.jp/kobe-yakei/events/kobe-night-mirage-sound-and-light-show/" target="_blank" rel="noopener">Feel KOBE</a></td></tr>
-        <tr><td>备选 神户港塔<br>波止场町 5-5</td><td>取消花火后再买票<br>大人约¥1200 · 营业至23:00<br><a href="https://www.kobe-port-tower.com/ticket/" target="_blank" rel="noopener">购票</a></td></tr>
-        <tr><td>大阪城天守阁<br>中央区大阪城 1-1</td><td>大人约¥1200 · WEB票免排队<br><a href="https://www.osakacastle.net/guide/" target="_blank" rel="noopener">购票说明</a><br><a href="https://ars-osakacastle.triplabo.jp/activity/ja/LINKTIVITY-E4UL8" target="_blank" rel="noopener">官方 WEB 票</a></td></tr>
-        <tr><td>MIRAIZA 大阪城 Crossfield<br>中央区大阪城 1-1 · 2F</td><td>8/29 约15:00 景观下午茶<br>咖啡14:30–17:00<br><a href="https://www.landmark-osaka.com/crossfield/" target="_blank" rel="noopener">官方预约</a></td></tr>
-        <tr><td>梅田蓝天大厦<br>北区大淀中 1-1-88</td><td>D2晚饭后夜景 · 现场买票<br>大阪站北口步行8–10分<br><a href="https://www.skybldg.co.jp/ticketplan/" target="_blank" rel="noopener">官方购票</a></td></tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>购物（店 · 详细地址 · 怎么买）</h2>
-      <table>
-        <tr><th>买什么</th><th>店 · 详细地址</th><th>购买方式</th></tr>
-        <tr><td>iPhone</td><td>友都八喜梅田<br>北区大深町 1-1</td><td>到店+护照免税<br><a href="https://www.yodobashi.com/ec/store/map/0081/" target="_blank" rel="noopener">店页</a></td></tr>
-        <tr><td>香奈儿包</td><td>阪急うめだ本店 5–6F<br>北区角田町 8-7</td><td><a href="https://www.chanel.com/jp/fashion/care-services/book-appointment/" target="_blank" rel="noopener">时尚来店预约</a></td></tr>
-        <tr><td>香奈儿彩妆/唇釉</td><td>大丸梅田 2F<br>北区梅田 3-1-1</td><td>到店 06-6345-9133<br><a href="https://www.chanel.com/jp/makeup/care-services/book-appointment/" target="_blank" rel="noopener">Beauty 预约</a></td></tr>
-        <tr><td>SK2/植村秀/MAC/NARS</td><td>大丸梅田 2F<br>同上</td><td>到店<br><a href="https://www.daimaru.co.jp/umedamise/floor/2f.html" target="_blank" rel="noopener">2F 楼层指南</a></td></tr>
-        <tr><td>Elégance大饼1+6</td><td>阪急 2F<br>角田町 8-7</td><td>到店；先电询<br>06-6313-7493</td></tr>
-        <tr><td>Kiss Me/IHADA/牙膏</td><td>松本清心斋桥南店<br>中央区心斋桥筋 2-5-5</td><td>到店 TAX FREE<br><a href="https://www.matsukiyococokara-online.com/map" target="_blank" rel="noopener">店铺检索</a></td></tr>
-        <tr><td>馥蕾诗双萃</td><td>柜位不稳</td><td>先电询大丸/高岛屋<br>备选机场免税</td></tr>
-        <tr><td>Hello Kitty</td><td>阪急11F / HEP FIVE 4F<br>或难波1-8-3戎桥店</td><td>到店<br><a href="https://stores.sanrio.co.jp/" target="_blank" rel="noopener">Sanrio 店表</a></td></tr>
-        <tr><td>无印</td><td>LUCUA 8F<br>北区梅田 3-1-3</td><td>到店<br><a href="https://www.muji.com/jp/ja/shop/detail/045278" target="_blank" rel="noopener">店页</a></td></tr>
-        <tr><td>伴手礼/黑巧/饼干</td><td>阪急 B1F + KITTE<br>NY饼干优先机场</td><td>到店<br><a href="https://www.hankyu-dept.co.jp/honten/floor/floorb1.html" target="_blank" rel="noopener">阪急B1指南</a></td></tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>交通路线</h2>
-      <table>
-        <tr><th>路线</th><th>耗时</th><th>费用</th></tr>
-        <tr><td>机场→塚本</td><td>80–90分</td><td>约 ¥1,210起</td></tr>
-        <tr><td>塚本→机场</td><td>70–90分</td><td>火车/巴士</td></tr>
-        <tr><td>塚本→USJ</td><td>25–35分</td><td>IC卡</td></tr>
-        <tr><td>塚本→梅田</td><td>约5分</td><td>约 ¥180</td></tr>
-        <tr><td>塚本→大阪城公园</td><td>20–25分</td><td>IC卡</td></tr>
-        <tr><td>塚本→神户</td><td>25–35分</td><td>IC卡</td></tr>
-        <tr><td>梅田→新世界</td><td>约20分</td><td>IC卡</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h2>生活参考</h2>
-      <dl class="info-grid">
-        <dt>气温</dt><dd>28–34°C 闷热多雨</dd>
-        <dt>穿搭</dt><dd>透气衣物+防晒+运动鞋</dd>
-        <dt>支付</dt><dd>备现金零钱</dd>
-        <dt>退税</dt><dd>机场 T1 离境退税</dd>
-        <dt>报警</dt><dd>110 · 急救 119</dd>
-        <dt>领馆</dt><dd>+81-6-6445-9481</dd>
-      </dl>
-    </div>
-  </section>
+  <!-- D1–D5 逐日详细行程（由 days.js 渲染） -->
+  <section class="panel" id="panel-d1"></section>
+  <section class="panel" id="panel-d2"></section>
+  <section class="panel" id="panel-d3"></section>
+  <section class="panel" id="panel-d4"></section>
+  <section class="panel" id="panel-d5"></section>
 </main>
 
 <div class="fab-bar">
@@ -462,6 +534,7 @@
 </div>
 <div class="toast" id="toast">已保存</div>
 
+<script src="days.js"></script>
 <script>
 const STORAGE_KEY = 'osaka2026_trip_v1';
 const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'osaka2026-wxh' };
@@ -743,71 +816,115 @@ const DATA = {
   },
 };
 
-const SCHEDULE = [
-  { day: 'D1 · 8/27 抵达·心斋桥夜打卡', rows: [
-    ['08:10–11:35', '交通：去程航班', '抵达关西机场 T1'],
-    ['11:35–12:30', '交通：关西机场 T1', '入境、取行李、买 ICOCA；可选 eSIM'],
-    ['—', '早餐：机上/机场便利店', '饿了可在 T1 先垫一口'],
-    ['12:30–13:00', '午餐A：机场便利店/美食街', 'T1便当轻食·先吃再走最省事'],
-    ['13:00–14:20', '交通：机场→民宿', 'JR关空快速→大阪→塚本·步行5–8分'],
-    ['14:20–14:40', '住宿：寄存行李', '入住前先放行李（提前问房东）'],
-    ['14:40–16:00', '午餐B：宮本むなし塚本站前', '塚本2-28-23·东口1分；备选便利店/吉野家'],
-    ['16:00–16:40', '住宿：正式入住', '16:00后办理·清点洗漱用品'],
-    ['16:40–18:40', '购物：松本清心斋桥南店', '心斋桥筋2-5-5 · Kiss Me/IHADA/牙膏'],
-    ['18:40–20:40', '晚餐：朋友预约的居酒屋', '以预约店名/时间/地址为准'],
-    ['20:40–22:20', '游玩：心斋桥·道顿堀打卡', '格力高、蟹道乐招牌拍照；今晚不吃第二顿'],
-    ['22:20–', '交通：回民宿', '别太晚；明天8:30出门'],
-  ]},
-  { day: 'D2 · 8/28 梅田+印度菜+蓝天夜景', rows: [
-    ['07:30–08:30', '住宿：起床化妆', '约8:30出门'],
-    ['08:30–08:45', '交通：塚本→大阪站', 'JR约5分'],
-    ['08:45–09:45', '早餐：KITTE/LUCUA', '大阪站直连，不赶'],
-    ['09:45–11:00', '购物：友都八喜梅田', '大深町1-1 · iPhone+办卡咨询'],
-    ['11:00–12:30', '购物：大丸梅田2F', '香奈儿Beauty/SK2/植村秀/MAC/NARS'],
-    ['12:30–14:00', '午餐：一兰梅田阪急东通店', '堂山町3-13 · 不可预约·排队已留空档'],
-    ['14:00–16:00', '游玩：HEP FIVE摩天轮', '角田町5-15·现场约¥800·夜景留给蓝天大厦'],
-    ['16:00–18:30', '购物：阪急うめだ本店', '2F大饼·5-6F香奈儿包·11F Sanrio·B1伴手礼'],
-    ['19:00–21:00', '晚餐：朋友预约的印度菜', '店名/地址/时间待补'],
-    ['21:00–22:20', '游玩：梅田蓝天大厦夜景', '北口步行8–10分·晚饭后现场买票'],
-    ['22:20–', '交通：回民宿', 'JR回塚本'],
-  ]},
-  { day: 'D3 · 8/29 大阪城+花火', rows: [
-    ['07:30–08:30', '住宿：起床化妆', '约8:30出门'],
-    ['08:30–09:00', '早餐：塚本站便利店', '饭团咖啡带走'],
-    ['09:00–09:30', '交通：塚本→大阪城公园', 'JR约20–25分'],
-    ['09:30–11:30', '游玩：大阪城天守阁+公园', '建议WEB票·慢慢走'],
-    ['11:30–13:00', '午餐：JO-TERRACE OSAKA', '大阪城3-1·现场选'],
-    ['13:00–14:30', '游玩：城内散步', '热就坐荫处；西之丸可选'],
-    ['14:30–16:30', '下午茶：MIRAIZA Crossfield', '约15:00·预约景观位'],
-    ['16:30–17:20', '交通：→神户元町', '出发前看@kobehanabi；取消则回民宿/梅田'],
-    ['17:20–18:40', '晚餐：元町便利店外带', '打包后去美利坚公园'],
-    ['18:40–19:30', '游玩：美利坚公园', '波止场町·找观赏位'],
-    ['19:30–19:35', '游玩：神户港烟花', '约5分钟·排期有但可当天取消'],
-    ['19:35–21:00', '交通：神户→民宿', '花火后回；若取消则看Night Mirage/港塔再回'],
-  ]},
-  { day: 'D4 · 8/30 ★USJ 顶门进顶门出', rows: [
-    ['06:15–06:35', '早餐：塚本站便利店', '饭团/咖啡带走'],
-    ['06:35–07:10', '交通：塚本→USJ', '大阪/西九条换乘→环球城'],
-    ['07:10–开园', '排队：USJ顶门', '安检·二维码备好；可能早于09:00放行'],
-    ['开园–10:45', '游玩：超级任天堂世界', '咚奇刚→马里奥赛车→耀西；入园立刻取整理券'],
-    ['10:45–13:00', '游玩：哈利波特+侏罗纪', '禁忌之旅→飞天翼龙→侏罗纪乘船'],
-    ['13:00–13:30', '午餐：USJ园内快速餐', '手机点餐；不排长餐厅'],
-    ['13:30–17:30', '游玩：大白鲨+小黄人+补漏', '看App实时排队；16:15巡游可选'],
-    ['17:30–18:20', '晚餐：USJ园内', '闭园前在园里吃完'],
-    ['18:20–20:00', '游玩：玩到闭园', '热门队列可能提前截止'],
-    ['20:00–20:40', '交通：USJ→民宿', '环球城→大阪→塚本'],
-  ]},
-  { day: 'D5 · 8/31 返程', rows: [
-    ['07:30–08:30', '住宿：起床化妆整理', '约8:30出门'],
-    ['08:30–09:00', '早餐：塚本便利店', '简单吃完'],
-    ['09:00–09:30', '住宿：退房', '能早退更好；10:00前必须退'],
-    ['09:30–10:00', '购物：KITTE/阪急B1（可选）', '只补漏；行李多就直去机场'],
-    ['10:00–11:20', '交通：梅田→关西机场', 'JR或巴士；伴手礼已买完可9:00走'],
-    ['11:20–12:20', '购物：机场T1（可选）', 'NY饼干若有·值机退税'],
-    ['—', '午餐：机场餐食', '安检后用餐'],
-    ['12:35–14:20', '交通：返程航班', ''],
-  ]},
-];
+function esc(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderStepCard(step) {
+  const typeCls = esc(step.type || '其他');
+  let html = `<article class="step-card">
+    <div class="step-head">
+      <span class="step-time">${esc(step.time)}</span>
+      <span class="step-type ${typeCls}">${typeCls}</span>
+      <div class="step-title">${esc(step.title)}</div>
+    </div>`;
+
+  if (step.from || step.to || step.transport) {
+    html += '<dl class="route-grid">';
+    if (step.from) html += `<div><dt>起点</dt><dd>${esc(step.from)}</dd></div>`;
+    if (step.to) html += `<div><dt>终点</dt><dd>${esc(step.to)}</dd></div>`;
+    if (step.transport) html += `<div><dt>交通</dt><dd>${esc(step.transport)}</dd></div>`;
+    if (step.duration) html += `<div><dt>耗时</dt><dd>${esc(step.duration)}</dd></div>`;
+    if (step.cost) html += `<div><dt>费用</dt><dd>${esc(step.cost)}</dd></div>`;
+    if (step.pay) html += `<div><dt>付款</dt><dd>${esc(step.pay)}</dd></div>`;
+    html += '</dl>';
+  } else if (step.pay) {
+    html += `<span class="pay-badge">付款：${esc(step.pay)}${step.cost ? ' · ' + esc(step.cost) : ''}</span>`;
+  }
+
+  if (step.route && step.route.length) {
+    html += '<ol class="route-steps">' + step.route.map(r => `<li>${r}</li>`).join('') + '</ol>';
+  }
+
+  if (step.mapImg) {
+    html += `<div class="step-map">
+      <img src="${esc(step.mapImg)}" alt="路线示意图" loading="lazy" referrerpolicy="no-referrer"
+        onerror="this.parentElement.querySelector('.map-caption').textContent='地图加载失败，请点下方 Google 导航'; this.style.display='none'" />
+      <div class="map-caption">路线示意图 · 红/蓝点为起终点大致位置</div>
+    </div>`;
+  }
+
+  if (step.note) html += `<div class="step-note">${step.note}</div>`;
+
+  if (step.mapLink || (step.links && step.links.length)) {
+    html += '<div class="step-actions">';
+    if (step.mapLink) {
+      html += `<a href="${esc(step.mapLink)}" target="_blank" rel="noopener">📍 打开 Google 导航</a>`;
+    }
+    (step.links || []).forEach(l => {
+      html += `<a class="secondary" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`;
+    });
+    html += '</div>';
+  }
+
+  html += '</article>';
+  return html;
+}
+
+function renderRefTable(title, rows, cols) {
+  if (!rows || !rows.length) return '';
+  const heads = cols.map(c => `<th>${c.label}</th>`).join('');
+  const body = rows.map(r => `<tr>${cols.map(c => `<td>${r[c.key] || '—'}</td>`).join('')}</tr>`).join('');
+  return `<div class="ref-block"><h3>${title}</h3><table><tr>${heads}</tr>${body}</table></div>`;
+}
+
+function renderDayPanel(day) {
+  const el = document.getElementById('panel-' + day.id);
+  if (!el) return;
+
+  let html = `<div class="hint">${day.hint}</div>`;
+
+  if (day.featureLink) {
+    html += `<a class="feature-link" href="${esc(day.featureLink.href)}">
+      <span><strong>${esc(day.featureLink.label)}</strong></span><b>→</b></a>`;
+  }
+
+  html += `<div class="card">
+    <div class="day-panel-head">
+      <h2>${esc(day.title)}</h2>
+      <div class="day-date">${esc(day.date)}</div>
+    </div>
+    ${day.steps.map(renderStepCard).join('')}
+  </div>`;
+
+  const refs = day.refs || {};
+  if (refs.meals || refs.shopping || refs.spots) {
+    html += '<div class="card"><h2>当日参考</h2>';
+    html += renderRefTable('餐饮', refs.meals, [
+      { key: 'slot', label: '餐次' },
+      { key: 'place', label: '地点' },
+      { key: 'book', label: '预约' },
+      { key: 'cost', label: '人均' },
+    ]);
+    html += renderRefTable('购物', refs.shopping, [
+      { key: 'item', label: '买什么' },
+      { key: 'shop', label: '店铺' },
+      { key: 'how', label: '怎么买' },
+    ]);
+    html += renderRefTable('景点/门票', refs.spots, [
+      { key: 'name', label: '名称' },
+      { key: 'addr', label: '地址' },
+      { key: 'ticket', label: '门票/说明' },
+    ]);
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+function renderAllDays() {
+  (window.DAY_PLANS || []).forEach(renderDayPanel);
+}
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -871,21 +988,6 @@ function renderCheckSection(containerId, sectionKey, config) {
   });
 }
 
-function renderSchedule() {
-  const el = document.getElementById('section-schedule');
-  el.innerHTML = '<h2>逐日时刻表</h2>' + SCHEDULE.map(d => `
-    <div class="day-card">
-      <div class="day-title">${d.day}</div>
-      ${d.rows.map(([time, place, desc]) => `
-        <div class="timeline-row">
-          <div class="time">${time}</div>
-          <div><div class="place">${place}</div>${desc ? `<div class="desc">${desc}</div>` : ''}</div>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
-}
-
 function updateProgress() {
   const state = loadState();
   let total = 0, done = 0;
@@ -943,7 +1045,7 @@ async function initApp() {
   renderCheckSection('section-gift', 'gift', DATA.gift);
   renderCheckSection('section-luggage', 'luggage', DATA.luggage);
   renderCheckSection('section-memo', 'memo', DATA.memo);
-  renderSchedule();
+  renderAllDays();
   updateProgress();
 }
 
