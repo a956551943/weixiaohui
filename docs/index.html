@@ -636,13 +636,13 @@
       </dl>
     </div>
 
+    <div class="card" id="section-gift"></div>
     <div class="card" id="section-booking"></div>
     <div class="card" id="section-clothes"></div>
     <div class="card" id="section-daily"></div>
     <div class="card" id="section-amenities"></div>
     <div class="card" id="section-prep"></div>
     <div class="card" id="section-shopping"></div>
-    <div class="card" id="section-gift"></div>
     <div class="card" id="section-luggage"></div>
     <div class="card" id="section-memo"></div>
   </section>
@@ -661,7 +661,7 @@
 </div>
 <div class="toast" id="toast">已保存</div>
 
-<script src="days.js?v=20260822d1"></script>
+<script src="days.js?v=20260826bring"></script>
 <script>
 const STORAGE_KEY = 'osaka2026_trip_v1';
 const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'osaka2026-wxh' };
@@ -783,13 +783,13 @@ function getShareUrl() {
 }
 
 function refreshAllSections() {
+  renderCheckSection('section-gift', 'gift', DATA.gift);
   renderCheckSection('section-booking', 'booking', DATA.booking);
   renderCheckSection('section-clothes', 'clothes', DATA.clothes);
   renderCheckSection('section-daily', 'daily', DATA.daily);
   renderCheckSection('section-amenities', 'amenities', DATA.amenities);
   renderCheckSection('section-prep', 'prep', DATA.prep);
   renderCheckSection('section-shopping', 'shopping', DATA.shopping);
-  renderCheckSection('section-gift', 'gift', DATA.gift);
   renderCheckSection('section-luggage', 'luggage', DATA.luggage);
   renderCheckSection('section-memo', 'memo', DATA.memo);
 }
@@ -910,14 +910,22 @@ const DATA = {
     ],
   },
   gift: {
-    title: '1.7 伴手礼分配',
-    fields: ['对象', '礼品', '预算', '备注'],
+    title: '帮带清单（优先）',
+    fields: ['购买日/地点', '价格', '备注'],
     items: [
-      { t: '伴手礼 1', s: '' },
-      { t: '伴手礼 2', s: '' },
-      { t: '伴手礼 3', s: '' },
-      { t: '伴手礼 4', s: '' },
-      { t: '伴手礼 5', s: '' },
+      { t: 'Epitome · 香奈儿 1957 香水', s: '确认价格后再买' },
+      { t: 'Psc8L184837O3O · lululemon 白色一套', s: '微信号；白配色一套' },
+      { t: '💍*右👄邊* · 香奈儿眼影盘 Warm ×1', s: '大丸/阪急香奈儿 Beauty' },
+      { t: '💍*右👄邊* · 山茶花洗面奶 ×1', s: '香奈儿山茶花洁面' },
+      { t: '💍*右👄邊* · 香奈儿柔光持妆粉底液 B10 ×1', s: '确认色号 B10' },
+      { t: '💍*右👄邊* · 黑巧 3 盒（含 1 盒抹茶）', s: '看价格；便宜可加购更多' },
+      { t: '💍*右👄邊* · 洛丽塔护发精油', s: '按对方照片对照购买' },
+      { t: '小源圆又圆 · 香奈儿柔光持妆粉底液 B01 ×1', s: '确认色号 B01' },
+      { t: '小源圆又圆 · 拍立得相纸', s: '友都八喜/相机店' },
+      { t: 'shixiaoxiea · 香奈儿泡泡粉底液 BD01', s: '先问价格，没问题再买' },
+      { t: '🦥今天8碗饭 · 烟 6 条', s: '海关限额注意；超额需申报/缴税' },
+      { t: '🦥今天8碗饭 · 奢侈品（待选）', s: '对方还在选，选定后补型号' },
+      { t: '梁宇杰 · 拍立得（开店用）', s: '相机本体；友都八喜/BIC' },
     ],
   },
   luggage: {
@@ -1164,13 +1172,13 @@ document.getElementById('btnReset').addEventListener('click', () => {
 
 async function initApp() {
   await initSync();
+  renderCheckSection('section-gift', 'gift', DATA.gift);
   renderCheckSection('section-booking', 'booking', DATA.booking);
   renderCheckSection('section-clothes', 'clothes', DATA.clothes);
   renderCheckSection('section-daily', 'daily', DATA.daily);
   renderCheckSection('section-amenities', 'amenities', DATA.amenities);
   renderCheckSection('section-prep', 'prep', DATA.prep);
   renderCheckSection('section-shopping', 'shopping', DATA.shopping);
-  renderCheckSection('section-gift', 'gift', DATA.gift);
   renderCheckSection('section-luggage', 'luggage', DATA.luggage);
   renderCheckSection('section-memo', 'memo', DATA.memo);
   renderAllDays();
