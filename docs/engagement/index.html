@@ -496,9 +496,7 @@ function renderList() {
       const detail = item.detail
         ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>'
         : '';
-      const remove = item.custom
-        ? '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>'
-        : '';
+      const remove = '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>';
       return '<div class="item ' + statusClass(item.status) + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
         '<div class="item-main"><input class="title-input" data-field="title" maxlength="120" value="' + esc(item.title) + '" aria-label="事项名称" autocomplete="off" />' +
         detail + '</div>' +
@@ -590,7 +588,7 @@ document.getElementById('list').addEventListener('click', event => {
   if (!button) return;
   if (button.dataset.action === 'delete-item') {
     const found = findItem(button.closest('.item').dataset.id);
-    if (!found || !found.item.custom) return;
+    if (!found) return;
     if (!confirm('删除「' + (found.item.title || '这项') + '」？')) return;
     found.section.items = found.section.items.filter(item => item.id !== found.item.id);
     renderList();
@@ -682,7 +680,6 @@ document.getElementById('btnReset').addEventListener('click', () => {
 
 let supabaseClient = null;
 let saveTimer = null;
-let retryTimer = null;
 let applyingRemote = false;
 let localVersion = 0;
 let ackedVersion = 0;
@@ -731,16 +728,14 @@ async function pushRemote(version) {
     errorMessage = (err && err.message) || '网络失败';
   }
   if (errorMessage) {
-    setSyncUI('off', '同步失败');
-    showToast('没写进数据库：' + String(errorMessage).slice(0, 42));
-    if (!retryTimer) {
-      retryTimer = setTimeout(() => {
-        retryTimer = null;
-        if (localVersion !== ackedVersion) pushRemote(localVersion);
-      }, 3000);
+    setSyncUI('off', '数据库连不上');
+    if (!pushRemote.told) {
+      pushRemote.told = true;
+      showToast('没写进数据库，这次修改只留在这台手机');
     }
     return;
   }
+  pushRemote.told = false;
   if (version >= ackedVersion) ackedVersion = version;
   if (localVersion !== version) {
     pushRemote(localVersion);
@@ -804,10 +799,8 @@ async function initApp() {
   setSyncUI('busy', '连接中…');
   const remote = await fetchRemote();
   if (remote.error) {
-    setSyncUI('off', '同步失败');
-    showToast('读不到共享清单：' + String(remote.error).slice(0, 42));
-    localVersion = 1;
-    pushRemote(localVersion);
+    setSyncUI('off', '数据库连不上');
+    showToast('共享数据库连不上，清单只保存在这台手机');
     return;
   }
   if (remote.data) {
