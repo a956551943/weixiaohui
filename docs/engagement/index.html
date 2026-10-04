@@ -89,6 +89,8 @@
       margin-bottom: 2px;
     }
     .count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .card h2 .status { margin-left: auto; }
+    .card h2 .status + .count { margin-left: 0; }
     .count.complete { color: #15803d; }
     .section-title-input {
       flex: 1;
@@ -328,7 +330,7 @@ const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'engagement-wxh'
 const ROOM_ID = new URLSearchParams(location.search).get('room') || SYNC.defaultRoom || 'engagement-wxh';
 const STORAGE_KEY = 'engagement_plan_v1_' + ROOM_ID;
 const STATUSES = ['已完成', '未完成', '待定', '已取消'];
-const CONTENT_VERSION = 2;
+const CONTENT_VERSION = 3;
 const FLOW_DETAIL = '男方7.30左右从酒店出发去男方家里，到门口放礼炮、鞭炮，然后进门喝茶、给聘金放礼品，闲聊一会后出发酒店准备拍照吃饭等。男主拿着聘金，聘金放在红色盘子里。鞭炮姐夫来放，茅台和红酒妈妈拿、香烟外甥女拿、红枣桂圆莲子花生粉丝姐姐拿、彩礼箱外甥和姐夫各拿一个（打开）。';
 
 const SEED = [
@@ -350,8 +352,11 @@ const SEED = [
   { id: 'wear-female', title: '着装 · 女方', items: [
     ['女主', '已完成'], ['母亲', '已完成'], ['弟弟', '已完成'], ['父亲', '未完成'],
   ]},
+  { id: 'flow', title: '现场流程', items: [
+    ['现场流程', '待定'],
+  ]},
   { id: 'scene', title: '其他', items: [
-    ['鞭炮', '待定'], ['现场流程', '待定'], ['染红色鸡蛋', '未完成'],
+    ['鞭炮', '待定'], ['染红色鸡蛋', '未完成'],
   ]},
 ];
 
@@ -377,7 +382,7 @@ function defaultState() {
       })),
     })),
   };
-  const flow = data.sections.find(section => section.id === 'scene').items.find(item => item.title === '现场流程');
+  const flow = data.sections.find(section => section.id === 'flow').items[0];
   flow.detail = FLOW_DETAIL;
   return data;
 }
@@ -406,11 +411,30 @@ function upgradeState(data) {
   if (scene) {
     if (scene.title === '现场与其他') scene.title = '其他';
     ensureItem(scene, 'scene_eggs', '染红色鸡蛋', '未完成');
-    const flow = scene.items.find(item => item.title === '现场流程' || (item.title || '').startsWith('现场流程'));
-    if (flow) {
-      flow.title = '现场流程';
-      if (!flow.detail) flow.detail = FLOW_DETAIL;
-    }
+  }
+  let flowItem = null;
+  (data.sections || []).forEach(section => {
+    if (section.id === 'flow') return;
+    const index = (section.items || []).findIndex(item => item.title === '现场流程' || (item.title || '').startsWith('现场流程'));
+    if (index < 0) return;
+    flowItem = section.items.splice(index, 1)[0];
+  });
+  let flowSection = (data.sections || []).find(section => section.id === 'flow');
+  if (!flowSection) {
+    flowSection = { id: 'flow', title: '现场流程', custom: false, items: [] };
+    const sceneIndex = data.sections.findIndex(section => section.id === 'scene');
+    if (sceneIndex >= 0) data.sections.splice(sceneIndex, 0, flowSection);
+    else data.sections.push(flowSection);
+  }
+  if (!flowSection.title) flowSection.title = '现场流程';
+  if (flowItem) {
+    flowItem.title = '现场流程';
+    if (!flowItem.detail) flowItem.detail = FLOW_DETAIL;
+    flowSection.items = flowSection.items.filter(item => item.id !== flowItem.id && item.title !== '现场流程');
+    flowSection.items.unshift(flowItem);
+  }
+  if (!flowSection.items.some(item => item.title === '现场流程')) {
+    flowSection.items.unshift({ id: 'flow_0', title: '现场流程', status: '待定', custom: false, detail: FLOW_DETAIL });
   }
   data.version = CONTENT_VERSION;
   return true;
@@ -531,6 +555,11 @@ function refreshMeta() {
   state.sections.forEach(section => {
     const badge = document.querySelector('[data-count="' + section.id + '"]');
     if (!badge) return;
+    if (section.id === 'flow') {
+      badge.textContent = '';
+      badge.classList.remove('complete');
+      return;
+    }
     const sectionDone = section.items.filter(item => item.status === '已完成').length;
     const settled = section.items.filter(item => item.status === '已完成' || item.status === '已取消').length;
     badge.textContent = sectionDone + '/' + section.items.length;
@@ -563,27 +592,36 @@ function flowGraphic() {
     '</div></div></div>';
 }
 
+function renderItem(item) {
+  const detail = item.detail
+    ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>'
+    : '';
+  const remove = '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>';
+  return '<div class="item ' + statusClass(item.status) + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
+    '<div class="item-main"><input class="title-input" data-field="title" maxlength="120" value="' + esc(item.title) + '" aria-label="事项名称" autocomplete="off" />' +
+    detail + '</div>' +
+    '<select class="status ' + statusClass(item.status) + '" aria-label="标记">' + statusOptions(item.status) + '</select>' +
+    remove + '</div>';
+}
+
 function renderList() {
   document.getElementById('list').innerHTML = state.sections.map(section => {
-    const items = section.items.map(item => {
-      const isFlow = item.title === '现场流程';
-      const detail = isFlow
-        ? flowGraphic()
-        : (item.detail ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>' : '');
-      const remove = '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>';
-      return '<div class="item ' + statusClass(item.status) + (isFlow ? ' has-flow' : '') + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
-        '<div class="item-main"><input class="title-input" data-field="title" maxlength="120" value="' + esc(item.title) + '" aria-label="事项名称" autocomplete="off" />' +
-        detail + '</div>' +
-        '<select class="status ' + statusClass(item.status) + '" aria-label="标记">' + statusOptions(item.status) + '</select>' +
-        remove + '</div>';
-    }).join('');
+    const flowItem = section.id === 'flow'
+      ? section.items.find(item => item.title === '现场流程')
+      : null;
+    const items = section.items.filter(item => item !== flowItem).map(renderItem).join('');
+    const headerStatus = flowItem
+      ? '<select class="status ' + statusClass(flowItem.status) + '" data-id="' + esc(flowItem.id) + '" aria-label="标记">' + statusOptions(flowItem.status) + '</select>'
+      : '';
+    const flowBody = flowItem ? flowGraphic() : '';
     const removeSection = section.custom
       ? '<button type="button" class="btn-text" data-action="delete-section" aria-label="删除分类">×</button>'
       : '';
     return '<section class="card" id="sec-' + esc(section.id) + '" data-section="' + esc(section.id) + '">' +
       '<h2><input class="section-title-input" data-action="rename-section" maxlength="30" value="' + esc(section.title) + '" aria-label="事项类别" />' +
-      removeSection + '<span class="count" data-count="' + esc(section.id) + '"></span></h2>' +
-      (items || '<div class="empty-section">还没有条目</div>') +
+      removeSection + headerStatus + '<span class="count" data-count="' + esc(section.id) + '"></span></h2>' +
+      flowBody +
+      (items || (flowItem ? '' : '<div class="empty-section">还没有条目</div>')) +
       '</section>';
   }).join('');
   refreshMeta();
@@ -632,11 +670,11 @@ function addSection() {
 document.getElementById('list').addEventListener('change', event => {
   if (!event.target.matches('select.status')) return;
   const row = event.target.closest('.item');
-  const found = findItem(row.dataset.id);
+  const found = findItem(row ? row.dataset.id : event.target.dataset.id);
   if (!found || !STATUSES.includes(event.target.value)) return;
   found.item.status = event.target.value;
   const kind = statusClass(found.item.status);
-  row.className = 'item ' + kind;
+  if (row) row.className = 'item ' + kind;
   event.target.className = 'status ' + kind;
   save();
 });
