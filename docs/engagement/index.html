@@ -107,14 +107,29 @@
       min-height: 36px;
       border-top: 1px solid #f8eeee;
     }
+    .item-main { flex: 1; min-width: 0; }
     .item-title, .title-input {
-      flex: 1;
+      width: 100%;
       min-width: 0;
       font-size: 14px;
     }
-    .item.done .item-title { color: #64748b; }
+    .item.done .item-title,
+    .item.done .title-input { color: #64748b; }
     .item.cancel .item-title,
     .item.cancel .title-input { color: #94a3b8; text-decoration: line-through; }
+    .detail-input {
+      width: 100%;
+      margin: 0 0 6px;
+      border: none;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 12px;
+      line-height: 1.5;
+      padding: 6px 8px;
+      resize: vertical;
+      min-height: 88px;
+    }
     .title-input, .field-input {
       width: 100%;
       border: 1px solid var(--border);
@@ -264,27 +279,30 @@ const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'engagement-wxh'
 const ROOM_ID = new URLSearchParams(location.search).get('room') || SYNC.defaultRoom || 'engagement-wxh';
 const STORAGE_KEY = 'engagement_plan_v1_' + ROOM_ID;
 const STATUSES = ['已完成', '未完成', '待定', '已取消'];
+const CONTENT_VERSION = 2;
+const FLOW_DETAIL = '男方7.30左右从酒店出发去男方家里，到门口放礼炮、鞭炮，然后进门喝茶、给聘金放礼品，闲聊一会后出发酒店准备拍照吃饭等。男主拿着聘金，聘金放在红色盘子里。鞭炮姐夫来放，茅台和红酒妈妈拿、香烟外甥女拿、红枣桂圆莲子花生粉丝姐姐拿、彩礼箱外甥和姐夫各拿一个（打开）。';
 
 const SEED = [
   { id: 'gift', title: '聘礼', items: [
     ['彩礼箱', '已完成'], ['彩礼银行卡', '已完成'], ['中华烟 2条', '已完成'], ['红酒 2瓶', '已完成'],
     ['花生 2斤', '已完成'], ['桂圆 2斤', '已完成'], ['红枣 2斤', '已完成'], ['茅台 2瓶', '已完成'],
-    ['聘金 8万', '未完成'], ['粉丝', '未完成'], ['猪脚 2只', '待定'],
+    ['聘金 八万八千八百八十八', '未完成'], ['粉丝6包 1斤1包', '未完成'], ['莲子 2斤', '未完成'], ['猪脚 2只', '已取消'],
   ]},
   { id: 'meal', title: '用餐', items: [
     ['酒席 10.11 日中午', '已完成'], ['中华烟 4条（40包）', '已完成'], ['红酒 1箱（6瓶）', '已完成'], ['饮料', '待定'],
+    ['喜糖 50盒', '已完成'],
   ]},
   { id: 'stay', title: '住宿', items: [
     ['10.10 日晚 天台友力大厦酒店（4个标间）', '已完成'],
   ]},
   { id: 'wear-male', title: '着装 · 男方', items: [
-    ['男主', '已完成'], ['母亲', '已完成'], ['姐姐', '已完成'], ['外甥', '已完成'], ['外甥女', '已完成'],
+    ['男主', '已完成'], ['母亲', '已完成'], ['姐姐', '已完成'], ['外甥', '已完成'], ['外甥女', '已完成'], ['姐夫', '已完成'],
   ]},
   { id: 'wear-female', title: '着装 · 女方', items: [
     ['女主', '已完成'], ['母亲', '已完成'], ['弟弟', '已完成'], ['父亲', '未完成'],
   ]},
-  { id: 'scene', title: '现场与其他', items: [
-    ['鞭炮', '待定'], ['现场流程', '待定'],
+  { id: 'scene', title: '其他', items: [
+    ['鞭炮', '待定'], ['现场流程', '待定'], ['染红色鸡蛋', '未完成'],
   ]},
 ];
 
@@ -296,7 +314,8 @@ function uid() {
 }
 
 function defaultState() {
-  return {
+  const data = {
+    version: CONTENT_VERSION,
     sections: SEED.map(sec => ({
       id: sec.id,
       title: sec.title,
@@ -309,6 +328,43 @@ function defaultState() {
       })),
     })),
   };
+  const flow = data.sections.find(section => section.id === 'scene').items.find(item => item.title === '现场流程');
+  flow.detail = FLOW_DETAIL;
+  return data;
+}
+
+function ensureItem(section, id, title, status) {
+  if (section.items.some(item => item.title === title || (item.title || '').startsWith(title))) return;
+  section.items.push({ id, title, status, custom: true });
+}
+
+function upgradeState(data) {
+  if ((data.version || 1) >= CONTENT_VERSION) return false;
+  const gift = (data.sections || []).find(section => section.id === 'gift');
+  if (gift) {
+    gift.items.forEach(item => {
+      if (item.title === '粉丝') item.title = '粉丝6包 1斤1包';
+      if (item.title === '聘金 8万' || item.title === '聘金') item.title = '聘金 八万八千八百八十八';
+      if ((item.title || '').startsWith('猪脚')) item.status = '已取消';
+    });
+    ensureItem(gift, 'gift_lotus', '莲子 2斤', '未完成');
+  }
+  const meal = (data.sections || []).find(section => section.id === 'meal');
+  if (meal) ensureItem(meal, 'meal_candy', '喜糖 50盒', '已完成');
+  const male = (data.sections || []).find(section => section.id === 'wear-male');
+  if (male) ensureItem(male, 'wear_male_jiefu', '姐夫', '已完成');
+  const scene = (data.sections || []).find(section => section.id === 'scene');
+  if (scene) {
+    if (scene.title === '现场与其他') scene.title = '其他';
+    ensureItem(scene, 'scene_eggs', '染红色鸡蛋', '未完成');
+    const flow = scene.items.find(item => item.title === '现场流程' || (item.title || '').startsWith('现场流程'));
+    if (flow) {
+      flow.title = '现场流程';
+      if (!flow.detail) flow.detail = FLOW_DETAIL;
+    }
+  }
+  data.version = CONTENT_VERSION;
+  return true;
 }
 
 function esc(value) {
@@ -385,16 +441,18 @@ function showToast(message) {
 }
 
 function persist() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  localVersion += 1;
+  const version = localVersion;
+  rememberLocal();
   if (applyingRemote) return;
   if (getSyncEnabled()) {
     setSyncUI('busy', '同步中…');
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(pushRemote, 500);
+    saveTimer = setTimeout(() => pushRemote(version), 400);
     return;
   }
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => showToast('已保存（本机）'), 350);
+  toastTimer = setTimeout(() => showToast('已保存在本机'), 350);
 }
 
 function save() {
@@ -435,23 +493,24 @@ function refreshMeta() {
 function renderList() {
   document.getElementById('list').innerHTML = state.sections.map(section => {
     const items = section.items.map(item => {
-      const title = item.custom
-        ? '<input class="title-input" data-field="title" maxlength="80" value="' + esc(item.title) + '" placeholder="事项名称" autocomplete="off" />'
-        : '<div class="item-title">' + esc(item.title) + '</div>';
+      const detail = item.detail
+        ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>'
+        : '';
       const remove = item.custom
         ? '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>'
         : '';
       return '<div class="item ' + statusClass(item.status) + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
-        title +
+        '<div class="item-main"><input class="title-input" data-field="title" maxlength="120" value="' + esc(item.title) + '" aria-label="事项名称" autocomplete="off" />' +
+        detail + '</div>' +
         '<select class="status ' + statusClass(item.status) + '" aria-label="标记">' + statusOptions(item.status) + '</select>' +
         remove + '</div>';
     }).join('');
-    const heading = section.custom
-      ? '<input class="section-title-input" data-action="rename-section" maxlength="30" value="' + esc(section.title) + '" aria-label="事项类别" />' +
-        '<button type="button" class="btn-text" data-action="delete-section" aria-label="删除分类">×</button>'
-      : esc(section.title);
+    const removeSection = section.custom
+      ? '<button type="button" class="btn-text" data-action="delete-section" aria-label="删除分类">×</button>'
+      : '';
     return '<section class="card" id="sec-' + esc(section.id) + '" data-section="' + esc(section.id) + '">' +
-      '<h2>' + heading + '<span class="count" data-count="' + esc(section.id) + '"></span></h2>' +
+      '<h2><input class="section-title-input" data-action="rename-section" maxlength="30" value="' + esc(section.title) + '" aria-label="事项类别" />' +
+      removeSection + '<span class="count" data-count="' + esc(section.id) + '"></span></h2>' +
       (items || '<div class="empty-section">还没有条目</div>') +
       '</section>';
   }).join('');
@@ -519,10 +578,10 @@ document.getElementById('list').addEventListener('input', event => {
     save();
     return;
   }
-  if (target.dataset.field !== 'title') return;
+  if (target.dataset.field !== 'title' && target.dataset.field !== 'detail') return;
   const found = findItem(target.closest('.item').dataset.id);
   if (!found) return;
-  found.item.title = target.value;
+  found.item[target.dataset.field] = target.value;
   save();
 });
 
@@ -562,8 +621,8 @@ document.getElementById('newSectionTitle').addEventListener('keydown', event => 
 });
 
 document.getElementById('btnSave').addEventListener('click', () => {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
-  if (getSyncEnabled()) pushRemote();
+  rememberLocal();
+  if (getSyncEnabled()) pushRemote(localVersion);
   else showToast('数据已保存在本机');
 });
 
@@ -623,7 +682,10 @@ document.getElementById('btnReset').addEventListener('click', () => {
 
 let supabaseClient = null;
 let saveTimer = null;
+let retryTimer = null;
 let applyingRemote = false;
+let localVersion = 0;
+let ackedVersion = 0;
 
 function getSyncEnabled() {
   return SYNC.enabled && SYNC.supabaseUrl && SYNC.supabaseAnonKey && window.supabase;
@@ -643,35 +705,71 @@ function getShareUrl() {
   return url.toString();
 }
 
-async function pushRemote() {
+function stateSignature(data) {
+  return JSON.stringify((data.sections || []).map(section => ({
+    id: section.id,
+    title: section.title,
+    items: (section.items || []).map(item => [item.id, item.title, item.status, item.detail || '']),
+  })));
+}
+
+function rememberLocal() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+}
+
+async function pushRemote(version) {
   if (!supabaseClient || applyingRemote) return;
-  const { error } = await supabaseClient.from('trip_states').upsert({
-    room_id: ROOM_ID,
-    data: state,
-    updated_at: new Date().toISOString(),
-  });
-  if (error) {
+  let errorMessage = '';
+  try {
+    const { error } = await supabaseClient.from('trip_states').upsert({
+      room_id: ROOM_ID,
+      data: state,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) errorMessage = error.message || error.details || '写入被拒绝';
+  } catch (err) {
+    errorMessage = (err && err.message) || '网络失败';
+  }
+  if (errorMessage) {
     setSyncUI('off', '同步失败');
-    showToast('同步失败，已存本机');
+    showToast('没写进数据库：' + String(errorMessage).slice(0, 42));
+    if (!retryTimer) {
+      retryTimer = setTimeout(() => {
+        retryTimer = null;
+        if (localVersion !== ackedVersion) pushRemote(localVersion);
+      }, 3000);
+    }
+    return;
+  }
+  if (version >= ackedVersion) ackedVersion = version;
+  if (localVersion !== version) {
+    pushRemote(localVersion);
     return;
   }
   setSyncUI('on', '多人同步 · ' + ROOM_ID);
-  showToast('已同步');
+  showToast('已写入共享清单');
 }
 
 async function fetchRemote() {
-  const { data, error } = await supabaseClient.from('trip_states').select('data').eq('room_id', ROOM_ID).maybeSingle();
-  if (error || !data || !data.data || !Array.isArray(data.data.sections)) return null;
-  return data.data;
+  try {
+    const { data, error } = await supabaseClient.from('trip_states').select('data').eq('room_id', ROOM_ID).maybeSingle();
+    if (error) return { error: error.message || '读取失败' };
+    if (!data || !data.data || !Array.isArray(data.data.sections)) return { data: null };
+    return { data: data.data };
+  } catch (err) {
+    return { error: (err && err.message) || '网络失败' };
+  }
 }
 
 function applyRemote(data) {
+  if (localVersion !== ackedVersion) return;
   normalizeState(data);
-  if (JSON.stringify(data) === JSON.stringify(state)) return;
+  upgradeState(data);
+  if (stateSignature(data) === stateSignature(state)) return;
   applyingRemote = true;
   state = data;
   renderList();
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  rememberLocal();
   applyingRemote = false;
 }
 
@@ -684,22 +782,18 @@ function subscribeRemote() {
       table: 'trip_states',
       filter: 'room_id=eq.' + ROOM_ID,
     }, (payload) => {
-      if (payload.new && payload.new.data) {
-        applyRemote(payload.new.data);
-        setSyncUI('on', '多人同步 · ' + ROOM_ID);
-      }
+      if (payload.new && payload.new.data) applyRemote(payload.new.data);
     })
     .subscribe();
 }
 
 async function initApp() {
   const stored = loadState();
-  if (stored) {
-    state = stored;
-    normalizeState(state);
-  }
+  if (stored) state = stored;
+  normalizeState(state);
+  const upgraded = upgradeState(state);
   renderList();
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  rememberLocal();
 
   if (!getSyncEnabled()) {
     setSyncUI('off', '单机模式');
@@ -708,16 +802,30 @@ async function initApp() {
 
   supabaseClient = window.supabase.createClient(SYNC.supabaseUrl, SYNC.supabaseAnonKey);
   setSyncUI('busy', '连接中…');
-  try {
-    const remote = await fetchRemote();
-    if (remote) applyRemote(remote);
-    else await pushRemote();
-    subscribeRemote();
-    setSyncUI('on', '多人同步 · ' + ROOM_ID);
-  } catch (_) {
+  const remote = await fetchRemote();
+  if (remote.error) {
     setSyncUI('off', '同步失败');
-    showToast('连不上共享文档，已改存本机');
+    showToast('读不到共享清单：' + String(remote.error).slice(0, 42));
+    localVersion = 1;
+    pushRemote(localVersion);
+    return;
   }
+  if (remote.data) {
+    applyingRemote = true;
+    state = remote.data;
+    normalizeState(state);
+    applyingRemote = false;
+  }
+  const needWrite = upgradeState(state) || upgraded || !remote.data;
+  renderList();
+  rememberLocal();
+  subscribeRemote();
+  if (needWrite) {
+    localVersion = 1;
+    await pushRemote(localVersion);
+    return;
+  }
+  setSyncUI('on', '多人同步 · ' + ROOM_ID);
 }
 
 initApp();
