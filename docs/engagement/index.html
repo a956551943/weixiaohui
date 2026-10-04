@@ -330,7 +330,7 @@ const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'engagement-wxh'
 const ROOM_ID = new URLSearchParams(location.search).get('room') || SYNC.defaultRoom || 'engagement-wxh';
 const STORAGE_KEY = 'engagement_plan_v1_' + ROOM_ID;
 const STATUSES = ['已完成', '未完成', '待定', '已取消'];
-const CONTENT_VERSION = 3;
+const CONTENT_VERSION = 4;
 const FLOW_DETAIL = '男方7.30左右从酒店出发去男方家里，到门口放礼炮、鞭炮，然后进门喝茶、给聘金放礼品，闲聊一会后出发酒店准备拍照吃饭等。男主拿着聘金，聘金放在红色盘子里。鞭炮姐夫来放，茅台和红酒妈妈拿、香烟外甥女拿、红枣桂圆莲子花生粉丝姐姐拿、彩礼箱外甥和姐夫各拿一个（打开）。';
 
 const SEED = [
@@ -352,11 +352,11 @@ const SEED = [
   { id: 'wear-female', title: '着装 · 女方', items: [
     ['女主', '已完成'], ['母亲', '已完成'], ['弟弟', '已完成'], ['父亲', '未完成'],
   ]},
-  { id: 'flow', title: '现场流程', items: [
-    ['现场流程', '待定'],
-  ]},
   { id: 'scene', title: '其他', items: [
     ['鞭炮', '待定'], ['染红色鸡蛋', '未完成'],
+  ]},
+  { id: 'flow', title: '现场流程', items: [
+    ['现场流程', '待定'],
   ]},
 ];
 
@@ -422,9 +422,12 @@ function upgradeState(data) {
   let flowSection = (data.sections || []).find(section => section.id === 'flow');
   if (!flowSection) {
     flowSection = { id: 'flow', title: '现场流程', custom: false, items: [] };
-    const sceneIndex = data.sections.findIndex(section => section.id === 'scene');
-    if (sceneIndex >= 0) data.sections.splice(sceneIndex, 0, flowSection);
-    else data.sections.push(flowSection);
+    data.sections.push(flowSection);
+  }
+  const flowIndex = data.sections.indexOf(flowSection);
+  if (flowIndex !== data.sections.length - 1) {
+    data.sections.splice(flowIndex, 1);
+    data.sections.push(flowSection);
   }
   if (!flowSection.title) flowSection.title = '现场流程';
   if (flowItem) {
