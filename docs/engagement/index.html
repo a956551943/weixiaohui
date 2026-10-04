@@ -117,6 +117,55 @@
     .item.done .title-input { color: #64748b; }
     .item.cancel .item-title,
     .item.cancel .title-input { color: #94a3b8; text-decoration: line-through; }
+    .item.has-flow { align-items: flex-start; }
+    .item.has-flow .status,
+    .item.has-flow .btn-text { margin-top: 8px; }
+    .flow { margin: 2px 0 8px; }
+    .flow-step {
+      display: grid;
+      grid-template-columns: 44px 16px minmax(0, 1fr);
+      column-gap: 8px;
+    }
+    .flow-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: right;
+      padding-top: 1px;
+    }
+    .flow-rail { position: relative; }
+    .flow-rail::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 14px;
+      bottom: -2px;
+      width: 2px;
+      background: #fecdd3;
+    }
+    .flow-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--primary);
+      position: relative;
+      z-index: 1;
+    }
+    .flow-name { font-size: 14px; font-weight: 600; }
+    .flow-desc { font-size: 12px; color: var(--muted); margin: 2px 0 12px; }
+    .flow-step:last-child .flow-rail::before { display: none; }
+    .carry {
+      background: #fff7ed;
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 4px;
+    }
+    .carry-title { font-size: 12px; font-weight: 700; color: #9a3412; margin-bottom: 6px; }
+    .carry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .carry-card { background: #fff; border-radius: 8px; padding: 6px 8px; }
+    .carry-who { font-size: 13px; font-weight: 700; }
+    .carry-what { font-size: 12px; color: #9a3412; line-height: 1.4; }
     .detail-input {
       width: 100%;
       margin: 0 0 6px;
@@ -490,14 +539,39 @@ function refreshMeta() {
   refreshSectionSelect();
 }
 
+function flowGraphic() {
+  const steps = [
+    ['7:30', '酒店出发', '男方从酒店去男方家里'],
+    ['门口', '放礼炮、鞭炮', '鞭炮由姐夫来放'],
+    ['进门', '喝茶、给聘金、放礼品', '聘金放在红色盘子里'],
+    ['之后', '闲聊一会', '然后出发去酒店'],
+    ['酒店', '拍照、吃饭', '准备酒席'],
+  ];
+  const carry = [
+    ['男主', '聘金，放在红色盘子里'],
+    ['妈妈', '茅台、红酒'],
+    ['姐姐', '红枣、桂圆、莲子、花生、粉丝'],
+    ['外甥女', '香烟'],
+    ['姐夫', '鞭炮；彩礼箱 1 个（打开）'],
+    ['外甥', '彩礼箱 1 个（打开）'],
+  ];
+  return '<div class="flow"><div class="flow-steps">' + steps.map(([time, name, desc]) =>
+    '<div class="flow-step"><div class="flow-time">' + time + '</div><div class="flow-rail"><div class="flow-dot"></div></div><div><div class="flow-name">' + name + '</div><div class="flow-desc">' + desc + '</div></div></div>'
+  ).join('') + '</div>' +
+    '<div class="carry"><div class="carry-title">进门时谁拿什么</div><div class="carry-grid">' +
+    carry.map(([who, what]) => '<div class="carry-card"><div class="carry-who">' + who + '</div><div class="carry-what">' + what + '</div></div>').join('') +
+    '</div></div></div>';
+}
+
 function renderList() {
   document.getElementById('list').innerHTML = state.sections.map(section => {
     const items = section.items.map(item => {
-      const detail = item.detail
-        ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>'
-        : '';
+      const isFlow = item.title === '现场流程';
+      const detail = isFlow
+        ? flowGraphic()
+        : (item.detail ? '<textarea class="detail-input" data-field="detail" maxlength="2000">' + esc(item.detail) + '</textarea>' : '');
       const remove = '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>';
-      return '<div class="item ' + statusClass(item.status) + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
+      return '<div class="item ' + statusClass(item.status) + (isFlow ? ' has-flow' : '') + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
         '<div class="item-main"><input class="title-input" data-field="title" maxlength="120" value="' + esc(item.title) + '" aria-label="事项名称" autocomplete="off" />' +
         detail + '</div>' +
         '<select class="status ' + statusClass(item.status) + '" aria-label="标记">' + statusOptions(item.status) + '</select>' +
