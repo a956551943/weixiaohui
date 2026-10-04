@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#9f1239" />
+  <title>订婚准备清单</title>
+  <style>
+    :root {
+      --bg: #faf6f4;
+      --card: #fff;
+      --primary: #be123c;
+      --primary-dark: #9f1239;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #f3e4e4;
+      --radius: 12px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: calc(68px + var(--safe-bottom));
+    }
+    header {
+      background: linear-gradient(135deg, #9f1239, #e11d48);
+      color: #fff;
+      padding: 16px 16px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(159, 18, 57, .18);
+    }
+    header h1 { font-size: 18px; font-weight: 700; }
+    header .meta { font-size: 12px; opacity: .92; margin-top: 4px; }
+    .progress-bar {
+      margin-top: 10px;
+      background: rgba(255,255,255,.25);
+      border-radius: 99px;
+      height: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #fde68a;
+      width: 0%;
+      transition: width .3s;
+    }
+    .progress-text { font-size: 11px; margin-top: 4px; opacity: .92; }
+    .sync-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #fecdd3; flex-shrink: 0; }
+    .sync-dot.on { background: #86efac; }
+    .sync-dot.busy { background: #fde68a; }
+    .sync-dot.off { background: #fecdd3; }
+    .btn-share {
+      margin-left: auto;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.45);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    main { padding: 10px; max-width: 640px; margin: 0 auto; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .card h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--primary-dark);
+      margin-bottom: 2px;
+    }
+    .count { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .count.complete { color: #15803d; }
+    .section-title-input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .section-title-input:focus { outline: none; }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      border-top: 1px solid #f8eeee;
+    }
+    .item-title, .title-input {
+      flex: 1;
+      min-width: 0;
+      font-size: 14px;
+    }
+    .item.done .item-title { color: #64748b; }
+    .item.cancel .item-title,
+    .item.cancel .title-input { color: #94a3b8; text-decoration: line-through; }
+    .title-input, .field-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--text);
+      -webkit-appearance: none;
+    }
+    .title-input { border: none; background: transparent; padding: 6px 0; }
+    .title-input:focus, .field-input:focus { outline: none; }
+    .field-input:focus { border-color: var(--primary); }
+    .status {
+      flex: 0 0 84px;
+      border: none;
+      border-radius: 99px;
+      padding: 4px 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .status.done { background: #dcfce7; color: #15803d; }
+    .status.todo { background: #f1f5f9; color: #475569; }
+    .status.pending { background: #ffedd5; color: #c2410c; }
+    .status.cancel { background: #f1f5f9; color: #94a3b8; }
+    .btn-text {
+      border: none;
+      background: none;
+      color: #94a3b8;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .empty-section { font-size: 13px; color: var(--muted); padding: 8px 0 4px; }
+    .composer-label { font-size: 13px; font-weight: 600; margin: 10px 0 6px; }
+    .composer-label:first-of-type { margin-top: 4px; }
+    .new-section-row, .add-form { display: grid; gap: 8px; }
+    .new-section-row { grid-template-columns: minmax(0, 1fr) auto; }
+    .add-form { grid-template-columns: minmax(0, 1fr) 120px auto; }
+    .add-form select, .field-input {
+      font-size: 13px;
+    }
+    .add-form select {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+    }
+    .new-section-row button, .add-form button, .fab-bar button {
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .new-section-row button, .add-form button {
+      padding: 7px 12px;
+      background: #fff1f2;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+    @media (max-width: 560px) {
+      .new-section-row, .add-form { grid-template-columns: 1fr; }
+    }
+    .fab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 8px 12px calc(8px + var(--safe-bottom));
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .fab-bar button { flex: 0 0 auto; padding: 10px 12px; }
+    .btn-save { flex: 1; background: var(--primary); color: #fff; }
+    .btn-ghost { background: #f1f5f9; color: var(--muted); }
+    .toast {
+      position: fixed;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #1e293b;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .file-input { display: none; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>订婚准备清单</h1>
+  <div class="meta">10月10日晚入住 · 10月11日中午酒席</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-text" id="progressText">已完成 0</div>
+  <div class="sync-bar">
+    <span class="sync-dot off" id="syncDot"></span>
+    <span id="syncLabel">连接中…</span>
+    <button class="btn-share" id="btnShare" type="button">分享链接</button>
+  </div>
+</header>
+
+<main>
+  <div class="card" id="composer">
+    <h2>新增</h2>
+    <div class="composer-label">事项类别</div>
+    <div class="new-section-row">
+      <input class="field-input" id="newSectionTitle" type="text" maxlength="30" placeholder="例如：交通、化妆" autocomplete="off" />
+      <button type="button" id="btnAddSection">添加分类</button>
+    </div>
+    <div class="composer-label">事项名称</div>
+    <div class="add-form">
+      <input class="field-input" id="newItemTitle" type="text" maxlength="80" placeholder="例如：喜糖" autocomplete="off" />
+      <select id="newItemSection" aria-label="选择分类"></select>
+      <button type="button" id="btnAddItem">添加条目</button>
+    </div>
+  </div>
+  <div id="list"></div>
+</main>
+
+<div class="fab-bar">
+  <button type="button" class="btn-ghost" id="btnExport">导出</button>
+  <button type="button" class="btn-ghost" id="btnImport">导入</button>
+  <button type="button" class="btn-ghost" id="btnReset">重置</button>
+  <button type="button" class="btn-save" id="btnSave">已自动保存</button>
+</div>
+<input class="file-input" id="importFile" type="file" accept="application/json,.json" />
+<div class="toast" id="toast">已保存</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SYNC = window.TRIP_SYNC || { enabled: false, defaultRoom: 'engagement-wxh' };
+const ROOM_ID = new URLSearchParams(location.search).get('room') || SYNC.defaultRoom || 'engagement-wxh';
+const STORAGE_KEY = 'engagement_plan_v1_' + ROOM_ID;
+const STATUSES = ['已完成', '未完成', '待定', '已取消'];
+
+const SEED = [
+  { id: 'gift', title: '聘礼', items: [
+    ['彩礼箱', '已完成'], ['彩礼银行卡', '已完成'], ['中华烟 2条', '已完成'], ['红酒 2瓶', '已完成'],
+    ['花生 2斤', '已完成'], ['桂圆 2斤', '已完成'], ['红枣 2斤', '已完成'], ['茅台 2瓶', '已完成'],
+    ['聘金 8万', '未完成'], ['粉丝', '未完成'], ['猪脚 2只', '待定'],
+  ]},
+  { id: 'meal', title: '用餐', items: [
+    ['酒席 10.11 日中午', '已完成'], ['中华烟 4条（40包）', '已完成'], ['红酒 1箱（6瓶）', '已完成'], ['饮料', '待定'],
+  ]},
+  { id: 'stay', title: '住宿', items: [
+    ['10.10 日晚 天台友力大厦酒店（4个标间）', '已完成'],
+  ]},
+  { id: 'wear-male', title: '着装 · 男方', items: [
+    ['男主', '已完成'], ['母亲', '已完成'], ['姐姐', '已完成'], ['外甥', '已完成'], ['外甥女', '已完成'],
+  ]},
+  { id: 'wear-female', title: '着装 · 女方', items: [
+    ['女主', '已完成'], ['母亲', '已完成'], ['弟弟', '已完成'], ['父亲', '未完成'],
+  ]},
+  { id: 'scene', title: '现场与其他', items: [
+    ['鞭炮', '待定'], ['现场流程', '待定'],
+  ]},
+];
+
+let state = defaultState();
+let toastTimer = null;
+
+function uid() {
+  return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function defaultState() {
+  return {
+    sections: SEED.map(sec => ({
+      id: sec.id,
+      title: sec.title,
+      custom: false,
+      items: sec.items.map((item, index) => ({
+        id: sec.id + '_' + index,
+        title: item[0],
+        status: item[1],
+        custom: false,
+      })),
+    })),
+  };
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[ch]));
+}
+
+function resolveStatus(item) {
+  if (STATUSES.includes(item.status)) return item.status;
+  if (item.flag === '待定' || item.flag === '待确认') return '待定';
+  return item.done ? '已完成' : '未完成';
+}
+
+function normalizeState(data) {
+  let changed = false;
+  (data.sections || []).forEach(section => {
+    (section.items || []).forEach(item => {
+      const status = resolveStatus(item);
+      if (item.status !== status || 'done' in item || 'flag' in item || 'note' in item) {
+        item.status = status;
+        delete item.done;
+        delete item.flag;
+        delete item.note;
+        changed = true;
+      }
+    });
+  });
+  return changed;
+}
+
+function statusClass(status) {
+  if (status === '已完成') return 'done';
+  if (status === '待定') return 'pending';
+  if (status === '已取消') return 'cancel';
+  return 'todo';
+}
+
+function statusOptions(current) {
+  return STATUSES.map(status =>
+    '<option value="' + status + '"' + (status === current ? ' selected' : '') + '>' + status + '</option>'
+  ).join('');
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('engagement_plan_v1');
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.sections)) return null;
+    return data;
+  } catch (_) {
+    return null;
+  }
+}
+
+function findItem(id) {
+  for (const section of state.sections) {
+    const item = section.items.find(entry => entry.id === id);
+    if (item) return { section, item };
+  }
+  return null;
+}
+
+function allItems() {
+  return state.sections.flatMap(section => section.items);
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+function persist() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  if (applyingRemote) return;
+  if (getSyncEnabled()) {
+    setSyncUI('busy', '同步中…');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(pushRemote, 500);
+    return;
+  }
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => showToast('已保存（本机）'), 350);
+}
+
+function save() {
+  refreshMeta();
+  persist();
+}
+
+function refreshSectionSelect() {
+  const select = document.getElementById('newItemSection');
+  const current = select.value;
+  select.innerHTML = state.sections.map(section =>
+    '<option value="' + esc(section.id) + '">' + esc(section.title || '未命名分类') + '</option>'
+  ).join('');
+  if (state.sections.some(section => section.id === current)) select.value = current;
+}
+
+function refreshMeta() {
+  const items = allItems();
+  const count = status => items.filter(item => item.status === status).length;
+  const done = count('已完成');
+  const cancelled = count('已取消');
+  const active = items.length - cancelled;
+  const pct = active ? Math.round(done / active * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent =
+    '已完成 ' + done + ' · 未完成 ' + count('未完成') + ' · 待定 ' + count('待定') + ' · 已取消 ' + cancelled;
+  state.sections.forEach(section => {
+    const badge = document.querySelector('[data-count="' + section.id + '"]');
+    if (!badge) return;
+    const sectionDone = section.items.filter(item => item.status === '已完成').length;
+    const settled = section.items.filter(item => item.status === '已完成' || item.status === '已取消').length;
+    badge.textContent = sectionDone + '/' + section.items.length;
+    badge.classList.toggle('complete', section.items.length > 0 && settled === section.items.length);
+  });
+  refreshSectionSelect();
+}
+
+function renderList() {
+  document.getElementById('list').innerHTML = state.sections.map(section => {
+    const items = section.items.map(item => {
+      const title = item.custom
+        ? '<input class="title-input" data-field="title" maxlength="80" value="' + esc(item.title) + '" placeholder="事项名称" autocomplete="off" />'
+        : '<div class="item-title">' + esc(item.title) + '</div>';
+      const remove = item.custom
+        ? '<button type="button" class="btn-text" data-action="delete-item" aria-label="删除">×</button>'
+        : '';
+      return '<div class="item ' + statusClass(item.status) + '" id="item-' + esc(item.id) + '" data-id="' + esc(item.id) + '">' +
+        title +
+        '<select class="status ' + statusClass(item.status) + '" aria-label="标记">' + statusOptions(item.status) + '</select>' +
+        remove + '</div>';
+    }).join('');
+    const heading = section.custom
+      ? '<input class="section-title-input" data-action="rename-section" maxlength="30" value="' + esc(section.title) + '" aria-label="事项类别" />' +
+        '<button type="button" class="btn-text" data-action="delete-section" aria-label="删除分类">×</button>'
+      : esc(section.title);
+    return '<section class="card" id="sec-' + esc(section.id) + '" data-section="' + esc(section.id) + '">' +
+      '<h2>' + heading + '<span class="count" data-count="' + esc(section.id) + '"></span></h2>' +
+      (items || '<div class="empty-section">还没有条目</div>') +
+      '</section>';
+  }).join('');
+  refreshMeta();
+}
+
+function addItem() {
+  const titleInput = document.getElementById('newItemTitle');
+  const sectionSelect = document.getElementById('newItemSection');
+  const title = titleInput.value.trim();
+  const sectionId = sectionSelect.value;
+  if (!title) {
+    titleInput.focus();
+    return;
+  }
+  const section = state.sections.find(entry => entry.id === sectionId);
+  if (!section) {
+    showToast('请先选择分类');
+    return;
+  }
+  const item = { id: uid(), title, status: '未完成', custom: true };
+  section.items.push(item);
+  titleInput.value = '';
+  renderList();
+  document.getElementById('newItemSection').value = sectionId;
+  save();
+  const row = document.getElementById('item-' + item.id);
+  if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  titleInput.focus();
+}
+
+function addSection() {
+  const input = document.getElementById('newSectionTitle');
+  const title = input.value.trim();
+  if (!title) {
+    input.focus();
+    return;
+  }
+  const id = uid();
+  state.sections.push({ id, title, custom: true, items: [] });
+  input.value = '';
+  renderList();
+  document.getElementById('newItemSection').value = id;
+  save();
+}
+
+document.getElementById('list').addEventListener('change', event => {
+  if (!event.target.matches('select.status')) return;
+  const row = event.target.closest('.item');
+  const found = findItem(row.dataset.id);
+  if (!found || !STATUSES.includes(event.target.value)) return;
+  found.item.status = event.target.value;
+  const kind = statusClass(found.item.status);
+  row.className = 'item ' + kind;
+  event.target.className = 'status ' + kind;
+  save();
+});
+
+document.getElementById('list').addEventListener('input', event => {
+  const target = event.target;
+  if (target.matches('[data-action="rename-section"]')) {
+    const section = state.sections.find(entry => entry.id === target.closest('.card').dataset.section);
+    if (!section) return;
+    section.title = target.value;
+    save();
+    return;
+  }
+  if (target.dataset.field !== 'title') return;
+  const found = findItem(target.closest('.item').dataset.id);
+  if (!found) return;
+  found.item.title = target.value;
+  save();
+});
+
+document.getElementById('list').addEventListener('click', event => {
+  const button = event.target.closest('button');
+  if (!button) return;
+  if (button.dataset.action === 'delete-item') {
+    const found = findItem(button.closest('.item').dataset.id);
+    if (!found || !found.item.custom) return;
+    if (!confirm('删除「' + (found.item.title || '这项') + '」？')) return;
+    found.section.items = found.section.items.filter(item => item.id !== found.item.id);
+    renderList();
+    save();
+    return;
+  }
+  if (button.dataset.action === 'delete-section') {
+    const section = state.sections.find(entry => entry.id === button.closest('.card').dataset.section);
+    if (!section || !section.custom) return;
+    if (!confirm('删除分类「' + (section.title || '未命名') + '」和里面的事项？')) return;
+    state.sections = state.sections.filter(entry => entry.id !== section.id);
+    renderList();
+    save();
+  }
+});
+
+document.getElementById('btnAddItem').addEventListener('click', addItem);
+document.getElementById('newItemTitle').addEventListener('keydown', event => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  addItem();
+});
+document.getElementById('btnAddSection').addEventListener('click', addSection);
+document.getElementById('newSectionTitle').addEventListener('keydown', event => {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  addSection();
+});
+
+document.getElementById('btnSave').addEventListener('click', () => {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  if (getSyncEnabled()) pushRemote();
+  else showToast('数据已保存在本机');
+});
+
+document.getElementById('btnShare').addEventListener('click', async () => {
+  const url = getShareUrl();
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast('链接已复制');
+  } catch (_) {
+    prompt('复制这个链接发给大家：', url);
+  }
+});
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = '订婚清单.json';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  showToast('已导出备份');
+});
+
+document.getElementById('btnImport').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', event => {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      if (!data || !Array.isArray(data.sections)) throw new Error('invalid');
+      if (!confirm('用这份备份覆盖当前清单？')) return;
+      normalizeState(data);
+      state = data;
+      renderList();
+      persist();
+      showToast('已导入');
+    } catch (_) {
+      showToast('这个文件不是清单备份');
+    }
+  };
+  reader.readAsText(file);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!confirm('恢复最初的订婚清单？自定义事项和当前标记会清除。')) return;
+  state = defaultState();
+  renderList();
+  persist();
+  showToast('已恢复初始清单');
+});
+
+let supabaseClient = null;
+let saveTimer = null;
+let applyingRemote = false;
+
+function getSyncEnabled() {
+  return SYNC.enabled && SYNC.supabaseUrl && SYNC.supabaseAnonKey && window.supabase;
+}
+
+function setSyncUI(status, label) {
+  const dot = document.getElementById('syncDot');
+  dot.className = 'sync-dot ' + (status === 'on' ? 'on' : status === 'busy' ? 'busy' : 'off');
+  document.getElementById('syncLabel').textContent = label;
+}
+
+function getShareUrl() {
+  const pages = 'https://a956551943.github.io/weixiaohui/engagement/';
+  const base = location.protocol === 'http:' || location.protocol === 'https:' ? location.href : pages;
+  const url = new URL(base, pages);
+  url.searchParams.set('room', ROOM_ID);
+  return url.toString();
+}
+
+async function pushRemote() {
+  if (!supabaseClient || applyingRemote) return;
+  const { error } = await supabaseClient.from('trip_states').upsert({
+    room_id: ROOM_ID,
+    data: state,
+    updated_at: new Date().toISOString(),
+  });
+  if (error) {
+    setSyncUI('off', '同步失败');
+    showToast('同步失败，已存本机');
+    return;
+  }
+  setSyncUI('on', '多人同步 · ' + ROOM_ID);
+  showToast('已同步');
+}
+
+async function fetchRemote() {
+  const { data, error } = await supabaseClient.from('trip_states').select('data').eq('room_id', ROOM_ID).maybeSingle();
+  if (error || !data || !data.data || !Array.isArray(data.data.sections)) return null;
+  return data.data;
+}
+
+function applyRemote(data) {
+  normalizeState(data);
+  if (JSON.stringify(data) === JSON.stringify(state)) return;
+  applyingRemote = true;
+  state = data;
+  renderList();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+  applyingRemote = false;
+}
+
+function subscribeRemote() {
+  supabaseClient
+    .channel('engagement_' + ROOM_ID)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'trip_states',
+      filter: 'room_id=eq.' + ROOM_ID,
+    }, (payload) => {
+      if (payload.new && payload.new.data) {
+        applyRemote(payload.new.data);
+        setSyncUI('on', '多人同步 · ' + ROOM_ID);
+      }
+    })
+    .subscribe();
+}
+
+async function initApp() {
+  const stored = loadState();
+  if (stored) {
+    state = stored;
+    normalizeState(state);
+  }
+  renderList();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+
+  if (!getSyncEnabled()) {
+    setSyncUI('off', '单机模式');
+    return;
+  }
+
+  supabaseClient = window.supabase.createClient(SYNC.supabaseUrl, SYNC.supabaseAnonKey);
+  setSyncUI('busy', '连接中…');
+  try {
+    const remote = await fetchRemote();
+    if (remote) applyRemote(remote);
+    else await pushRemote();
+    subscribeRemote();
+    setSyncUI('on', '多人同步 · ' + ROOM_ID);
+  } catch (_) {
+    setSyncUI('off', '同步失败');
+    showToast('连不上共享文档，已改存本机');
+  }
+}
+
+initApp();
+</script>
+</body>
+</html>
